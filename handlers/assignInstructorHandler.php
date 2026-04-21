@@ -11,7 +11,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $result = $course->assignInstructor($instructor_id, $course_id);
 
     if (is_array($result) && $result['status'] == false) {
-        echo $result['message'];
+        echo "<script>
+            alert(". json_encode($result['message']) . ");
+            window.history.back();
+        </script>";
     } else {
         header("Location: /course-management/ui/admin_dashboard.php");
         exit();
