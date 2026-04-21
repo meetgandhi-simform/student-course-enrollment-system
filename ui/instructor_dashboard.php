@@ -1,5 +1,7 @@
 <?php
-require "/var/www/html/course-management/handlers/instructorDashboardHandler.php";
+
+require __DIR__ . "./../handlers/instructorDashboardHandler.php";
+
 ?>
 
 <!DOCTYPE html>

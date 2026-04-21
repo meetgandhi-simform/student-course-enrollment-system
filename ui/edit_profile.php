@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-require_once "/var/www/html/course-management/Class/User.php";
+require_once __DIR__ . "./../Class/User.php";
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: /course-management/ui/login.php");

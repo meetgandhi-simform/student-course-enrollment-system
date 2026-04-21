@@ -1,5 +1,5 @@
 <?php
-require_once "/var/www/html/course-management/Class/Course.php";
+require_once __DIR__ . "./../Class/Course.php";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 

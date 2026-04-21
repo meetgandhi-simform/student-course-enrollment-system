@@ -1,9 +1,9 @@
 <?php
 session_start();
 
-require_once '/var/www/html/course-management/Class/Course.php';
-require_once '/var/www/html/course-management/helper/auth.php';
-require_once '/var/www/html/course-management/validator/Validator.php';
+require_once __DIR__ . "./../Class/Course.php";
+require_once __DIR__ . "./../helper/auth.php";
+require_once __DIR__ . "./../validator/Validator.php";
 
 requireLogin();
 requireRole('admin');

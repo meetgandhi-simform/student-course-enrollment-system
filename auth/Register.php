@@ -1,7 +1,7 @@
 <?php
 
-require_once '/var/www/html/course-management/Class/User.php';
-require_once '/var/www/html/course-management/validator/Validator.php';
+require_once __DIR__ . "./../Class/User.php";
+require_once __DIR__ . "./../validator/Validator.php";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 

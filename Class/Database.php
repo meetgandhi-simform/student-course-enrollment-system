@@ -6,7 +6,7 @@ class Database
 
     public function connect()
     {
-        $config = require "/var/www/html/course-management/config/config.php";
+        $config = require __DIR__ . "./../config/config.php";
 
         $db = $config['db'];
 

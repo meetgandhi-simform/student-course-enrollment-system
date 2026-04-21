@@ -1,5 +1,5 @@
 <?php
-require "/var/www/html/course-management/handlers/adminDashboardHandler.php";
+require_once __DIR__ . "./../handlers/adminDashboardHandler.php";
 ?>
 
 <!DOCTYPE html>

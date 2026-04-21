@@ -1,9 +1,9 @@
 <?php
 session_start();
 
-require_once '/var/www/html/course-management/Class/User.php';
-require_once '/var/www/html/course-management/validator/Validator.php';
-require_once '/var/www/html/course-management/helper/auth.php';
+require_once __DIR__ . "./../Class/User.php";
+require_once __DIR__ . "./../validator/Validator.php";
+require_once __DIR__ . "./../helper/auth.php";
 
 requireLogin();
 requireRole('admin');
@@ -50,16 +50,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             window.location.href = '/course-management/ui/admin_dashboard.php';
         </script>";
     }
-    if ($result) {
+    if ($result['status'] == true) {
         echo "<script>
             alert('User Created Successfully');
             window.location.href = '/course-management/ui/admin_dashboard.php';
         </script>";
     } else {
         echo "<script>
-            alert('Error creating user');
-            window.location.href = '/course-management/ui/admin_dashboard.php';
-        </script>";
+        alert(" . json_encode($result['message']) . ");
+        window.location.href = '/course-management/ui/admin_dashboard.php';
+    </script>";
     }
 }
 ?>

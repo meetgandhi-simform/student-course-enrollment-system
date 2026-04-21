@@ -1,6 +1,6 @@
 <?php
 
-require_once '/var/www/html/course-management/Class/Database.php';
+require_once __DIR__ . "./../Class/Database.php";
 
 class Login{
     private $conn;

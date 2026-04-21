@@ -1,6 +1,7 @@
 <?php
 session_start();
-require_once "/var/www/html/course-management/Class/User.php";
+
+require_once __DIR__ . "./../Class/User.php";
 
 // check
 if (!isset($_SESSION['user_id']) || strtolower($_SESSION['role']) != 'admin') {

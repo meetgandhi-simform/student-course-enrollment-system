@@ -51,7 +51,7 @@ class User
             $stmt->bind_param("sssss", $name, $email, $hashedPassword, $phone, $role);
             $stmt->execute();
 
-            return $this->conn->insert_id;
+            return ["status" => true , "id" => $this->conn->insert_id];
         } catch (Exception $e) {
             return ["status" => false, "message" => $e->getMessage()];
         }

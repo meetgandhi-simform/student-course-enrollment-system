@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-require_once "/var/www/html/course-management/helper/auth.php";
+require_once __DIR__ . "./../helper/auth.php";
 
 requireLogin();
 requireRole('student');

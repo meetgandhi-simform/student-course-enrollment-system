@@ -1,7 +1,7 @@
 <?php
 
-require_once '/var/www/html/course-management/helper/auth.php';
-require "/var/www/html/course-management/handlers/adminDashboardHandler.php";
+require_once __DIR__ . "./../helper/auth.php";
+require __DIR__ . "./../handlers/adminDashboardHandler.php";
 
 requireLogin();
 requireRole('admin');

@@ -1,7 +1,7 @@
 <?php
-require_once "/var/www/html/course-management/Class/User.php";
-require_once "/var/www/html/course-management/Class/Instructor.php";
-require_once "/var/www/html/course-management/Class/Course.php";
+require_once __DIR__ . "./../Class/User.php";
+require_once __DIR__ . "./../Class/Instructor.php";
+require_once __DIR__ . "./../Class/Course.php";
 
 $user = new User();
 $instructor = new Instructor();

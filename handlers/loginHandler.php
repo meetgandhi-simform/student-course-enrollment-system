@@ -1,8 +1,8 @@
 <?php
 
-require_once '/var/www/html/course-management/helper/redirectUser.php';
-require_once '/var/www/html/course-management/auth/Login.php';
-require_once '/var/www/html/course-management/validator/Validator.php';
+require_once __DIR__ . "./../helper/redirectUser.php";
+require_once __DIR__ . "./../auth/Login.php";
+require_once __DIR__ . "./../validator/Validator.php";
 
 
 session_start();
