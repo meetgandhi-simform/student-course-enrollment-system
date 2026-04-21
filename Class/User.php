@@ -2,11 +2,23 @@
 
 require_once 'Database.php';
 
+/**
+ * Class User
+ * 
+ * Handles all user-related database operations such as:
+ * - Creating users
+ * - Fetching users (admins/students)
+ * - Counting users
+ * - Activating/Deactivating users
+ * - Updating user details
+ */
+
 class User
 {
-
+    /**
+     * @var mysqli Database connection instance
+     */
     private $conn;
-
     /**
      * Constructor - Initailize database connection
      */
@@ -18,12 +30,15 @@ class User
     }
 
     /**
-     * @param string $name
-     * @param string $email
-     * @param string $password
-     * @param int $phone
-     * @param string $role
-     * @return int|array Returns Inserted id on success or error array in failure
+     * Create a new user
+     *
+     * @param string $name User name
+     * @param string $email User email
+     * @param string $password Plain password (will be hashed)
+     * @param string $phone User phone number
+     * @param string $role User role (Admin/Student/etc.)
+     * 
+     * @return int|array Returns inserted ID on success or error array on failure
      */
 
     public function createUser($name, $email, $password, $phone, $role)
@@ -41,6 +56,16 @@ class User
             return ["status" => false, "message" => $e->getMessage()];
         }
     }
+
+    /**
+     * Get paginated list of admins
+     *
+     * @param int $page Current page number
+     * @param int $limit Number of records per page
+     * 
+     * @return array Response with status and data
+     */
+
     public function totalAdmins($page, $limit)
     {
         try {
@@ -62,6 +87,16 @@ class User
             return ["status" => false, "message" => $e->getMessage()];
         }
     }
+
+    /**
+     * Get paginated list of students
+     *
+     * @param int $page Current page
+     * @param int $limit Records per page
+     * 
+     * @return array Response with status and data
+     */
+
     public function totalStudents($page, $limit)
     {
         try {
@@ -83,6 +118,13 @@ class User
             return ["status" => false, "message" => $e->getMessage()];
         }
     }
+
+    /**
+     * Count total admins
+     *
+     * @return array Status and count
+     */
+
     public function countAdmins()
     {
         try {
@@ -93,6 +135,12 @@ class User
             return ["status" => false, "message" => $e->getMessage()];
         }
     }
+
+    /**
+     * Count total students
+     *
+     * @return array Status and count
+     */
 
     public function countStudents()
     {
@@ -105,6 +153,12 @@ class User
         }
     }
 
+    /**
+     * Count active users
+     *
+     * @return array Status and count
+     */
+
     public function countActiveUsers()
     {
         try {
@@ -115,6 +169,14 @@ class User
             return ["status" => false, "message" => $e->getMessage()];
         }
     }
+
+    /**
+     * Soft delete a user (mark as inactive)
+     *
+     * @param int $id User ID
+     * 
+     * @return array Status and message
+     */
 
     public function deleteUsers($id)
     {
@@ -130,6 +192,15 @@ class User
         }
     }
 
+    /**
+     * Activate a user
+     *
+     * @param int $id User ID
+     * 
+     * @return array Status and message
+     */
+
+
     public function activateUser($id)
     {
         try {
@@ -144,6 +215,14 @@ class User
         }
     }
 
+    /**
+     * Get user by ID
+     *
+     * @param int $id User ID
+     * 
+     * @return array|null User data or null if not found
+     */
+
     public function getUserById($id)
     {
         $sql = "SELECT id, name, email, phone FROM users WHERE id = ?";
@@ -154,6 +233,16 @@ class User
         $result = $stmt->get_result();
         return $result->fetch_assoc();
     }
+
+    /**
+     * Update user (partial update / PATCH-like behavior)
+     *
+     * @param int $id User ID
+     * @param array $data Associative array of fields to update
+     *                    Example: ['name' => 'John', 'email' => 'abc@mail.com']
+     * 
+     * @return array Status and result info
+     */
 
     public function updateUser($id, $data)
     {
@@ -166,7 +255,7 @@ class User
                 echo "<script> 
                 alert('Nothing To Update');
                 window.history.back();
-            </script>";
+                </script>";
             }
 
             if (!empty($data['name'])) {
@@ -186,12 +275,18 @@ class User
                 $values[] = $data['phone'];
                 $types .= 's';
             }
-            
-            print_r($data);
 
-            return ["status" => true,"id" =>  $this->conn->insert_id];
+            $sql = "UPDATE users SET " . implode(', ', $fields) . " WHERE id = ?";
+            $values[] = $id;
+            $types .= "i";
+
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bind_param($types, ...$values);
+            $stmt->execute();
+
+            return ["status" => true, "id" =>  $stmt->affected_rows];
         } catch (Exception $e) {
-            return ["status" => false,"message" => $e->getMessage()];
+            return ["status" => false, "message" => $e->getMessage()];
         }
     }
 }

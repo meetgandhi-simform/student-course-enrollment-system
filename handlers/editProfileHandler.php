@@ -8,16 +8,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $id = $_POST['id'];
     $name = Validator::name($_POST['name']);
+    $oldName = Validator::name($_POST['oldname']);
     $email = Validator::email($_POST['email']);
+    $oldEmail = Validator::email($_POST['oldemail']);
     $phone = Validator::phone($_POST['phone']);
+    $oldPhone = Validator::phone($_POST['oldphone']);
 
-    if($name !== $_POST['oldname']){
+    if ($name !== $oldName) {
         $data['name'] = $name['data'];
     }
-    if($email !== $_POST['oldemail']){
+    if ($email !== $oldEmail) {
         $data['email'] = $email['data'];
     }
-    if($phone !== $_POST['oldphone']){
+    if ($phone !== $oldPhone) {
         $data['phone'] = $phone['data'];
     }
 
@@ -38,9 +41,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
     $user = new User();
-    try{
-    $result = $user->updateUser($id, $data);
-    }catch(Exception $e){
+    try {
+        $result = $user->updateUser($id, $data);
+    } catch (Exception $e) {
         echo "<script>
             alert('Error: " . htmlspecialchars($e->getMessage()) . "');
             window.history.back();
@@ -57,4 +60,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo $result['message'];
     }
 }
-?>
