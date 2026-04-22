@@ -7,12 +7,6 @@ require_once __DIR__ . "./../validator/Validator.php";
 
 session_start();
 
-
-// if (isset($_SESSION['user_id'])) {
-//     $role = strtolower($_SESSION['role']);
-//     redirectUser($role);
-// }
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $loginObj = new Login();
