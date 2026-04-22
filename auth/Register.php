@@ -2,6 +2,8 @@
 
 require_once __DIR__ . "./../Class/User.php";
 require_once __DIR__ . "./../validator/Validator.php";
+require_once __DIR__ . "./../helper/MailHelper.php";
+
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -40,11 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     );
 
     if ($id) {
-        echo "<script>
-            alert('Registered Successfully!');
-            window.location.href = '/course-management/ui/login.php';
-        </script>";
-        exit();
+        MailHelper::registerEmail($email['data']);
     } else {
         echo "Error!";
     }
