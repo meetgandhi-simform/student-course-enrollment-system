@@ -45,23 +45,40 @@ require_once __DIR__ . "./../handlers/adminDashboardHandler.php";
                         </span>
                     </td>
                     <td>
-                        <a class="delete-btn"
-                            href="/course-management/auth/Delete.php?id=<?= $admin['id']; ?>"
-                            onclick="return confirm('Are you sure you want to delete this user?')">
-                            Delete
-                        </a>
 
-                        <?php if (strtolower($admin['isActive']) === 'active'): ?>
-                            <button class="active-btn disabled" disabled>
-                                Already Active
-                            </button>
+                        <?php if ($_SESSION['user_id'] == $admin['id']): ?>
+
+                            <!-- Current Logged-in User -->
+                            <span class="disabled-text">Current User</span>
+
                         <?php else: ?>
 
-                            <a class="active-btn"
-                                href="/course-management/handlers/activeUserHandler.php?id=<?= $admin['id']; ?>"
-                                onclick="return confirm('Are You sure You want to activate this user? ')">Activate User
+                            <!-- Delete Button -->
+                            <a class="delete-btn"
+                                href="/course-management/auth/Delete.php?id=<?= $admin['id']; ?>"
+                                onclick="return confirm('Are you sure you want to delete this user?')">
+                                Delete
                             </a>
+
+                            <!-- Active / Activate Button -->
+                            <?php if (strtolower($admin['isActive']) === 'active'): ?>
+
+                                <button class="active-btn disabled" disabled>
+                                    Already Active
+                                </button>
+
+                            <?php else: ?>
+
+                                <a class="active-btn"
+                                    href="/course-management/handlers/activeUserHandler.php?id=<?= $admin['id']; ?>"
+                                    onclick="return confirm('Are you sure you want to activate this user?')">
+                                    Activate User
+                                </a>
+
+                            <?php endif; ?>
+
                         <?php endif; ?>
+
                     </td>
                 </tr>
             <?php endforeach; ?>
