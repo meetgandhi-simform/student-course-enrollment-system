@@ -10,10 +10,8 @@ requireRole('admin');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-
     $courseObj = new Course();
 
-    
     $nameValidation = Validator::courseName($_POST['name']);
     $weeksValidation = Validator::weeks($_POST['weeks']);
     $seatsValidation = Validator::seats($_POST['seats']);
@@ -34,15 +32,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $durationInWeeks = $weeksValidation['data'];
     $seats = $seatsValidation['data'];
 
-    try{
-        $result = $courseObj->createCourse($name,$durationInWeeks,$seats);
-    }catch(Exception $e){
+    try {
+        $result = $courseObj->createCourse($name, $durationInWeeks, $seats);
+    } catch (Exception $e) {
         echo "<script>
             alert('Error: " . htmlspecialchars($e->getMessage()) . "');
             window.location.href = '/course-management/ui/admin_dashboard.php';
         </script>";
     }
-    if($result){
+    if ($result) {
         echo "<script>
             alert('Course Created Successfully');
             window.location.href = '/course-management/ui/createCourse.php';
@@ -54,5 +52,3 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </script>";
     }
 }
-
-?>

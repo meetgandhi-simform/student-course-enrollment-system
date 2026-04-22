@@ -7,4 +7,3 @@ session_destroy();
 
 header("Location: /course-management/ui/login.php");
 exit();
-?>

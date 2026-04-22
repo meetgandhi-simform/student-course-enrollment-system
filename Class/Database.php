@@ -12,11 +12,11 @@ class Database
     public function connect()
     {
         $this->conn = new mysqli(
-                $_ENV['host'],
-                $_ENV['username'],
-                $_ENV['password'],
-                $_ENV['dbname'],
-                $_ENV['port']
+            $_ENV['host'],
+            $_ENV['username'],
+            $_ENV['password'],
+            $_ENV['dbname'],
+            $_ENV['port']
         );
 
         if ($this->conn->connect_error) {
@@ -26,4 +26,3 @@ class Database
         return $this->conn;
     }
 }
-?>

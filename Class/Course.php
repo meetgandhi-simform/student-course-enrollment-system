@@ -2,9 +2,31 @@
 
 require_once 'Database.php';
 
-class Course{
+/**
+ * Class Course
+ * 
+ * Handles course-related operations such as:
+ * - Creating courses
+ * - Assigning instructors
+ * - Fetching course data
+ * - Pagination and counting
+ * - Removing instructor assignments
+ */
+
+class Course
+{
+
+    /**
+     * @var mysqli Database connection instance
+     */
 
     private $conn;
+
+    /**
+     * Course constructor.
+     * Initializes database connection.
+     */
+
 
     public function __construct()
     {
@@ -12,33 +34,59 @@ class Course{
         $this->conn = $db->connect();
     }
 
-    public function createCourse($name,$durationInWeeks,$seats){
-        try{
+    /**
+     * Create a new course
+     *
+     * @param string $name Course name
+     * @param int $durationInWeeks Duration in weeks
+     * @param int $seats Maximum seats available
+     * 
+     * @return int|array Returns inserted course ID on success or error array on failure
+     */
+
+    public function createCourse($name, $durationInWeeks, $seats)
+    {
+        try {
             $sql = "INSERT INTO courses(course_name,duration_weeks,max_seats) VALUES (?,?,?)";
             $stmt = $this->conn->prepare($sql);
-            $stmt->bind_param("sii",$name,$durationInWeeks,$seats);
+            $stmt->bind_param("sii", $name, $durationInWeeks, $seats);
             $stmt->execute();
 
             return $this->conn->insert_id;
-
-        }catch(Exception $e){
-            return ["status" => false , "message" => $e->getMessage()];
+        } catch (Exception $e) {
+            return ["status" => false, "message" => $e->getMessage()];
         }
     }
 
-    public function assignInstructor($instructor_id,$course_id){
-        try{
+    /**
+     * Assign an instructor to a course
+     *
+     * @param int $instructor_id Instructor ID
+     * @param int $course_id Course ID
+     * 
+     * @return int|array Returns inserted ID or error array
+     */
+
+    public function assignInstructor($instructor_id, $course_id)
+    {
+        try {
             $sql = "INSERT INTO course_instructor (instructor_id,course_id) values (?,?)";
             $stmt = $this->conn->prepare($sql);
-            $stmt->bind_param("ii",$instructor_id,$course_id);
+            $stmt->bind_param("ii", $instructor_id, $course_id);
             $stmt->execute();
 
             return $this->conn->insert_id;
-
-        }catch(Exception $e){
-            return ["status" => false , "message" => $e->getMessage()];
+        } catch (Exception $e) {
+            return ["status" => false, "message" => $e->getMessage()];
         }
     }
+
+    /**
+     * Get all courses (basic info)
+     *
+     * @return array List of courses with id and name
+     */
+
 
     public function getCourses()
     {
@@ -48,43 +96,62 @@ class Course{
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
-    public function courseWithInstructor($page,$limit)
+    /**
+     * Get courses with instructor details (paginated)
+     *
+     * @param int $page Current page number
+     * @param int $limit Number of records per page
+     * 
+     * @return array Status and data OR error message
+     */
+
+    public function courseWithInstructor($page, $limit)
     {
-        try{
-        $offset = ($page-1) * $limit;
-        $sql = "SELECT c.id,c.course_name,c.max_seats,ci.instructor_id,u.name,u.isActive FROM courses c
+        try {
+            $offset = ($page - 1) * $limit;
+            $sql = "SELECT c.id,c.course_name,c.max_seats,ci.instructor_id,u.name,u.isActive FROM courses c
                 INNER JOIN course_instructor ci ON c.id = ci.course_id
                 INNER JOIN users u on u.id = ci.instructor_id LIMIT ? OFFSET ?";
-        $stmt = $this->conn->prepare($sql);
-        $stmt -> bind_param("ii",$limit,$offset);
-        $stmt -> execute();
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bind_param("ii", $limit, $offset);
+            $stmt->execute();
 
-        $result = $stmt->get_result();
+            $result = $stmt->get_result();
 
-        $data = [];
+            $data = [];
 
-        while($row = $result->fetch_assoc()){
-            $data[] = $row;
-        }
-        return ["status" => true, "data" => $data];
-        }catch(Exception $e){
-            return ["status" => false , "mesage" => $e->getMessage()];
+            while ($row = $result->fetch_assoc()) {
+                $data[] = $row;
+            }
+            return ["status" => true, "data" => $data];
+        } catch (Exception $e) {
+            return ["status" => false, "message" => $e->getMessage()];
         }
     }
 
+    /**
+     * Count total courses with assigned instructors
+     *
+     * @return array Status and total count OR error message
+     */
     public function countCourseWithInstructor()
     {
-        try{
-        $sql = "SELECT COUNT(*) as total FROM courses c
+        try {
+            $sql = "SELECT COUNT(*) as total FROM courses c
                 INNER JOIN course_instructor ci ON c.id = ci.course_id
                 INNER JOIN users u ON u.id = ci.instructor_id";
-        $result = $this->conn->query($sql);
-        return  ["status" => "true" , "count" => $result->fetch_assoc()['total']];
-    }catch(Exception $e){
-        return ["status" => false , "message" => $e->getMessage()];
-    }
+            $result = $this->conn->query($sql);
+            return  ["status" => true, "count" => $result->fetch_assoc()['total']];
+        } catch (Exception $e) {
+            return ["status" => false, "message" => $e->getMessage()];
+        }
     }
 
+    /**
+     * Count total number of courses
+     *
+     * @return array Status and total count OR error message
+     */
     public function countCourses()
     {
         try {
@@ -95,6 +162,15 @@ class Course{
             return ["status" => false, "message" => $e->getMessage()];
         }
     }
+
+    /**
+     * Remove an instructor from a course
+     *
+     * @param int $course_id Course ID
+     * @param int $instructor_id Instructor ID
+     * 
+     * @return array Status and message
+     */
 
     public function deleteCourseInstructor($course_id, $instructor_id)
     {
@@ -112,5 +188,3 @@ class Course{
         }
     }
 }
-
-?>

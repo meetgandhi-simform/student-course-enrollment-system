@@ -5,4 +5,3 @@ require_once __DIR__ . "./../helper/auth.php";
 
 requireLogin();
 requireRole('instructor');
-?>

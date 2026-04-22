@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if (is_array($result) && $result['status'] == false) {
         echo "<script>
-            alert(". json_encode($result['message']) . ");
+            alert(" . json_encode($result['message']) . ");
             window.history.back();
         </script>";
     } else {
@@ -20,4 +20,3 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit();
     }
 }
-?>

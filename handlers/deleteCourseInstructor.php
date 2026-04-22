@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once __DIR__ . "./../Class/Course.php";
-require_once __DIR__ . "./../helper/redirectUser.php";
+require_once __DIR__ . "./../helper/auth.php";
 
 // auth check
 requireRole('admin');
@@ -25,12 +25,10 @@ $result = $obj->deleteCourseInstructor($course_id, $instructor_id);
 
 if ($result['status'] !== false) {
     echo "<script>window.history.back();</script>";
-}else{
+} else {
     $_SESSION['error'] = $result['message'];
     echo "<script>window.history.back();</script>";
-
 }
 
 header("Location: /course-management/ui/admin_dashboard.php");
 exit();
-?>

@@ -29,4 +29,3 @@ if ($userObj->deleteUsers($id)['status'] !== false) {
     }
 }
 exit();
-?>

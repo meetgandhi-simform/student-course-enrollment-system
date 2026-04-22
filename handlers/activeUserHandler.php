@@ -1,7 +1,7 @@
 <?php
 session_start();
-require_once __DIR__ ."/../Class/User.php";
-require_once __DIR__ . "./../helper/redirectUser.php";
+require_once __DIR__ . "/../Class/User.php";
+require_once __DIR__ . "./../helper/auth.php";
 
 // check
 requireRole('admin');
@@ -25,4 +25,3 @@ if ($userObj->activateUser($id)['status'] !== false) {
     }
 }
 exit();
-?>

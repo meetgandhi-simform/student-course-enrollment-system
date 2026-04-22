@@ -135,17 +135,15 @@ if ($courseObj->countCourses()['status'] !== false) {
     $_SESSION['error'] = $courseObj->countCourses()['message'];
 }
 
-if ($enrollObj->countEnrollments()['status'] !== false){
+if ($enrollObj->countEnrollments()['status'] !== false) {
     $totalEnrollments = $enrollObj->countEnrollments()['count'];
-}else{
+} else {
     $totalEnrollments = [];
     $_SESSION['error'] = $enrollObj->countEnrollments()['message'];
 }
-if($userObj->countActiveUsers()['status'] !== false){
+if ($userObj->countActiveUsers()['status'] !== false) {
     $totalActiveUsers = $userObj->countActiveUsers()['count'];
 } else {
     $totalActiveUsers = [];
     $_SESSION['error'] = $userObj->countActiveUsers()['message'];
 }
-?>
-

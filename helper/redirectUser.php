@@ -11,8 +11,8 @@ function redirectUser($role)
         case 'instructor':
             header("Location: /course-management/ui/instructor_dashboard.php");
             break;
-        // default:
-        //     header("Location: /course-management/ui/login.php");
+            // default:
+            //     header("Location: /course-management/ui/login.php");
     }
-    exit(); 
+    exit();
 }

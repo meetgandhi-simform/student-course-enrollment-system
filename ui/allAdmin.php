@@ -51,17 +51,17 @@ require_once __DIR__ . "./../handlers/adminDashboardHandler.php";
                             Delete
                         </a>
 
-                            <?php if (strtolower($admin['isActive']) === 'active'): ?>
-                                <button class="active-btn disabled" disabled>
-                                    Already Active
-                                </button>
-                            <?php else: ?>
+                        <?php if (strtolower($admin['isActive']) === 'active'): ?>
+                            <button class="active-btn disabled" disabled>
+                                Already Active
+                            </button>
+                        <?php else: ?>
 
-                        <a class="active-btn"
-                            href="/course-management/handlers/activeUserHandler.php?id=<?= $admin['id']; ?>"
-                            onclick="return confirm('Are You sure You want to activate this user? ')">Activate User
-                        </a>
-                            <?php endif ; ?>
+                            <a class="active-btn"
+                                href="/course-management/handlers/activeUserHandler.php?id=<?= $admin['id']; ?>"
+                                onclick="return confirm('Are You sure You want to activate this user? ')">Activate User
+                            </a>
+                        <?php endif; ?>
                     </td>
                 </tr>
             <?php endforeach; ?>

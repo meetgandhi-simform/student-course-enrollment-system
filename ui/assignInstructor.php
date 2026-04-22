@@ -32,7 +32,7 @@ $courses = $course->getCourses();
                 <option value="">Select Instructor</option>
                 <?php foreach ($instructors as $inst): ?>
                     <option value="<?= $inst['id'] ?>">
-                        <?=  $inst['id'] ?> -
+                        <?= $inst['id'] ?> -
                         <?= $inst['name'] ?>
                     </option>
                 <?php endforeach; ?>
@@ -43,7 +43,7 @@ $courses = $course->getCourses();
                 <option value="">Select Course</option>
                 <?php foreach ($courses as $course): ?>
                     <option value="<?= $course['id'] ?>">
-                        <?=  $course['id'] ?> -
+                        <?= $course['id'] ?> -
                         <?= $course['course_name'] ?>
                     </option>
                 <?php endforeach; ?>

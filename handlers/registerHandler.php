@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = Validator::email($_POST['email']);
     $password = Validator::password($_POST['password']);
     $phone = Validator::phone($_POST['phone']);
-    $role = $_POST['role']; 
+    $role = $_POST['role'];
 
     $errors = [];
 
@@ -36,17 +36,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit();
     }
 
-    try{
-    $result = $userObj->createUser(
-        $name['data'],
-        $email['data'],
-        $password['data'],
-        $phone['data'],
-        $role
-    );
-    }catch(Exception $e){
+    try {
+        $result = $userObj->createUser(
+            $name['data'],
+            $email['data'],
+            $password['data'],
+            $phone['data'],
+            $role
+        );
+    } catch (Exception $e) {
         echo "<script>
-            alert('Error: ".htmlspecialchars($e->getMessage()). "');
+            alert('Error: " . htmlspecialchars($e->getMessage()) . "');
             window.location.href = '/course-management/ui/admin_dashboard.php';
         </script>";
     }
@@ -62,4 +62,3 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </script>";
     }
 }
-?>

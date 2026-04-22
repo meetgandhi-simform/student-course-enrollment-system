@@ -15,5 +15,3 @@ function requireRole($role)
         exit();
     }
 }
-
-?>
