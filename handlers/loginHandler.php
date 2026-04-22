@@ -38,8 +38,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['name'] = $user['name'];
         $_SESSION['role'] = $user['role'];
+        $_SESSION['isActive'] = $user['isActive'];
 
-        redirectUser(strtolower($user['role']));
+
+        if ($user['isActive'] === 'Active') {
+            redirectUser(strtolower($user['role']));
+        } else {
+            echo "<script>
+                alert('Your Account is Deactivated!!');
+                window.history.back();
+            </script>";
+        }
+
     } else {
         echo "<script>
             alert('Invalid Email or Password');

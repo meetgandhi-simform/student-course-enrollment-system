@@ -37,7 +37,7 @@ class Login
      */
     public function login($email, $password)
     {
-        $sql = "SELECT id, name, email, password, role FROM users WHERE email = ? limit 1";
+        $sql = "SELECT id, name, email, password, isActive, role FROM users WHERE email = ? limit 1";
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param("s", $email);
         $stmt->execute();
@@ -52,6 +52,7 @@ class Login
                 'id' => $result['id'],
                 'name' => $result['name'],
                 'email' => $result['email'],
+                'isActive' => $result['isActive'],
                 'role' => $result['role']
             ];
         }
