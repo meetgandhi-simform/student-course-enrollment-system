@@ -11,10 +11,7 @@ if (!isset($_SESSION['user_id'])) {
 $userObj = new User();
 $user_id = $_SESSION['user_id'];
 
-/**
- * You need this function in User class:
- * getUserById($id)
- */
+
 $user = $userObj->getUserById($user_id);
 
 if (!$user) {

@@ -1,12 +1,10 @@
 <?php
 session_start();
 require_once __DIR__ . "./../Class/Course.php";
+require_once __DIR__ . "./../helper/redirectUser.php";
 
 // auth check
-if (!isset($_SESSION['user_id']) || strtolower($_SESSION['role']) != 'admin') {
-    header("Location: /course-management/ui/login.php");
-    exit();
-}
+requireRole('admin');
 
 // validate inputs
 if (
