@@ -15,10 +15,14 @@
             <li><a href="alllStudents.php?tab=students">All Students</a></li>
             <li><a href="allInstructor.php?tab=instructors">All Instructors</a></li>
             <li><a href="allAdmin.php?tab=admins">All Admins</a></li>
+            <li><a href="allEnrollments.php?tab=enrollments">All Enrollments</a></li>
             <li><a href="courseWithInstructor.php?tab=courses">Courses</a></li>
             <li><a href="admin_create_user.php">Create User</a></li>
+            <li><a href="enrollStudent.php">Enroll Student</a></li>
             <li><a href="createCourse.php">Create Course</a></li>
             <li><a href="assignInstructor.php">Assign Instructor</a></li>
+
+
             <li class="profile-dropdown">
                 <button onclick="toggleDropdown()">👤 Profile ▾</button>
 

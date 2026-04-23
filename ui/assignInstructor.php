@@ -2,6 +2,7 @@
 require_once __DIR__ . "./../Class/User.php";
 require_once __DIR__ . "./../Class/Instructor.php";
 require_once __DIR__ . "./../Class/Course.php";
+require_once __DIR__ . "./../handlers/assignInstructorHandler.php";
 
 $user = new User();
 $instructor = new Instructor();

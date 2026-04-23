@@ -16,7 +16,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             window.history.back();
         </script>";
     } else {
-        header("Location: /course-management/ui/admin_dashboard.php");
+        echo "<script>
+            alert('Instructor Assigned to course Succesfully ')
+            window.location.href = '/course-management/ui/courseWithInstructor.php?tab=courses';
+        </script>";
         exit();
     }
 }

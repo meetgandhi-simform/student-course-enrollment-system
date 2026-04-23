@@ -21,10 +21,10 @@ $userObj = new User();
 if ($userObj->deleteUsers($id)['status'] !== false) {
     $result = $userObj->deleteUsers($id);
 
-    if ($result) {
+    if ($result['status'] === true) {
         echo "<script>window.history.back();</script>";
     } else {
-        $_SESSION['error'] = $userObj->activateUser($id)['Message'];
+        $_SESSION['error'] = $result['Message'];
         echo "<script>window.history.back();</script>";
     }
 }

@@ -47,18 +47,15 @@ require __DIR__ . "./../handlers/adminDashboardHandler.php";
                         </span>
                     </td>
                     <td>
-                        <a class="delete-btn"
-                            href="/course-management/auth/Delete.php?id=<?= $student['id']; ?>"
-                            onclick="return confirm('Are you sure?')">
-                            Delete
-                        </a>
+                        <?php if($student['isActive'] === 'Active'): ?>
+                            <a class="delete-btn"
+                                href="/course-management/auth/Delete.php?id=<?= $student['id']; ?>"
+                                onclick="return confirm('Are you sure?')">
+                                Delete
+                            </a>
+                        <?php endif; ?>
 
-                        <?php if (strtolower($student['isActive']) === 'active'): ?>
-                            <button class="active-btn disabled" disabled>
-                                Already Active
-                            </button>
-                        <?php else: ?>
-
+                        <?php if ($student['isActive'] === 'Inactive'): ?>
                             <a class="active-btn"
                                 href="/course-management/handlers/activeUserHandler.php?id=<?= $student['id']; ?>"
                                 onclick="return confirm('Are You sure You want to activate this user? ')">Activate User

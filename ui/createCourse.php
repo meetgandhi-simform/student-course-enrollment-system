@@ -1,3 +1,7 @@
+<?php
+require_once __DIR__ . "./../handlers/createCourseHandler.php";
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 

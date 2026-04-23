@@ -23,7 +23,14 @@ $student_page = max(1, (int)($_GET['student_page'] ?? 1));
 $instructor_page = max(1, (int)($_GET['instructor_page'] ?? 1));
 $course_page = max(1, (int)($_GET['course_page'] ?? 1));
 $admin_page = max(1, (int)($_GET['admin_page'] ?? 1));
+$enrollment_page = max(1, (int)($_GET['enrollment_page'] ?? 1));
 
+$totalAdmins = [];
+$totalStudents = [];
+$totalInstructors = [];
+$totalCourses = [];
+$totalEnrollments = [];
+$totalActiveUsers = [];
 
 if ($tab === 'students') {
     $studentResponse = $userObj->totalStudents($student_page, $limit);
@@ -107,6 +114,26 @@ if ($tab === 'courses') {
     $totalCourseWithInstructorPages = ceil($totalCourseWithInstructor / $limit);
 }
 
+if ($tab === 'enrollments') {
+    $enrollmentResponse = $enrollObj->allEnrollments($enrollment_page, $limit);
+
+    if ($enrollmentResponse['status']) {
+        $enrollments = $enrollmentResponse['data'];
+    } else {
+        $enrollments = [];
+        $_SESSION['error'] = $enrollmentResponse['message'];
+    }
+
+    if ($enrollObj->countEnrollments()['status'] !== false) {
+        $totalEnrollments = $enrollObj->countEnrollments()['count'];
+    } else {
+        $totalEnrollments = [];
+        $_SESSION['error'] = $enrollObj->countEnrollments()['message'];
+    }
+
+    $totalEnrollmentPages = ceil($totalEnrollments / $limit);
+}
+
 if ($userObj->countAdmins()['status'] !== false) {
     $totalAdmins = $userObj->countAdmins()['count'];
 } else {
@@ -135,15 +162,15 @@ if ($courseObj->countCourses()['status'] !== false) {
     $_SESSION['error'] = $courseObj->countCourses()['message'];
 }
 
-if ($enrollObj->countEnrollments()['status'] !== false) {
-    $totalEnrollments = $enrollObj->countEnrollments()['count'];
-} else {
-    $totalEnrollments = [];
-    $_SESSION['error'] = $enrollObj->countEnrollments()['message'];
-}
 if ($userObj->countActiveUsers()['status'] !== false) {
     $totalActiveUsers = $userObj->countActiveUsers()['count'];
 } else {
     $totalActiveUsers = [];
     $_SESSION['error'] = $userObj->countActiveUsers()['message'];
+}
+if ($enrollObj->countEnrollments()['status'] !== false) {
+    $totalEnrollments = $enrollObj->countEnrollments()['count'];
+} else {
+    $totalEnrollments = [];
+    $_SESSION['error'] = $enrollObj->countEnrollments()['message'];
 }

@@ -1,3 +1,8 @@
+<?php
+require_once __DIR__ . "./../helper/auth.php";
+require_once __DIR__ . "./../handlers/registerHandler.php";
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 

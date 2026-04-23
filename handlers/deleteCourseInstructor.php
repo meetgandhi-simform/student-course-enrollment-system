@@ -23,12 +23,11 @@ $instructor_id = (int)$_GET['instructor_id'];
 $obj = new Course();
 $result = $obj->deleteCourseInstructor($course_id, $instructor_id);
 
-if ($result['status'] !== false) {
+if ($result['status'] === true) {
     echo "<script>window.history.back();</script>";
 } else {
     $_SESSION['error'] = $result['message'];
     echo "<script>window.history.back();</script>";
 }
 
-header("Location: /course-management/ui/admin_dashboard.php");
 exit();
