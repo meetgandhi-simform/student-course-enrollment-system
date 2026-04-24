@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $result = $obj->enrollStudent($student_id, $course_instructor_id);
 
     if ($result['status']) {
-            echo "<script>
+        echo "<script>
                 alert('Student enrolled successfully!')
                 window.location.href = '/course-management/ui/allEnrollments.php?tab=enrollments';
             </script>";
@@ -53,5 +53,3 @@ if ($result['status'] === true) {
     echo json_encode($instructor);
     exit;
 }
-
-

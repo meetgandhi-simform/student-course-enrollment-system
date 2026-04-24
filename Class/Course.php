@@ -86,8 +86,6 @@ class Course
      *
      * @return array List of courses with id and name
      */
-
-
     public function getCourses()
     {
         $sql = "SELECT id, course_name FROM courses";
@@ -96,9 +94,14 @@ class Course
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
+    /**
+     * Get all courses for dropdown/options
+     *
+     * @return array Status and data OR error message
+     */
     public function getOptionCourses()
     {
-        try{
+        try {
             $sql = "SELECT id, course_name FROM courses";
             $stmt = $this->conn->prepare($sql);
             $stmt->execute();
@@ -106,12 +109,12 @@ class Course
 
             $data = [];
 
-            while($row = $result->fetch_assoc()){
+            while ($row = $result->fetch_assoc()) {
                 $data[] = $row;
             }
-            return ["status" => true , "data" => $data];
-        }catch(Exception $e){
-            return ["status" => false , "message" => $e->getMessage()];
+            return ["status" => true, "data" => $data];
+        } catch (Exception $e) {
+            return ["status" => false, "message" => $e->getMessage()];
         }
     }
 

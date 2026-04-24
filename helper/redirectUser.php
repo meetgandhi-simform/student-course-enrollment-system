@@ -1,4 +1,12 @@
 <?php
+
+/**
+ * Redirect user based on role
+ *
+ * @param string $role User role (admin, student, instructor)
+ * 
+ * @return void
+ */
 function redirectUser($role)
 {
     switch ($role) {
@@ -11,8 +19,6 @@ function redirectUser($role)
         case 'instructor':
             header("Location: /course-management/ui/instructor_dashboard.php");
             break;
-            // default:
-            //     header("Location: /course-management/ui/login.php");
     }
     exit();
 }

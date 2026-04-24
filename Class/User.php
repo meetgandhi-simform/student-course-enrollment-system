@@ -234,6 +234,11 @@ class User
         return $result->fetch_assoc();
     }
 
+    /**
+     * Get all students (id and name)
+     *
+     * @return array Status and student list OR error message
+     */
     public function getStudents()
     {
         $sql = "SELECT id, name FROM users WHERE role = 'Student'";

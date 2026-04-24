@@ -63,7 +63,7 @@ require_once __DIR__ . "./../handlers/adminDashboardHandler.php";
 
                             <!-- Active / Activate Button -->
                             <?php if ($admin['isActive'] === 'Inactive'): ?>
-                                
+
                                 <a class="active-btn"
                                     href="/course-management/handlers/activeUserHandler.php?id=<?= $admin['id']; ?>"
                                     onclick="return confirm('Are you sure you want to activate this user?')">

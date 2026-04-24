@@ -7,8 +7,24 @@ use PHPMailer\PHPMailer\Exception;
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
 
+/**
+ * Class MailHelper
+ * 
+ * Handles email sending using PHPMailer and SMTP configuration.
+ */
+
 class MailHelper
 {
+
+    /**
+     * Send an email
+     *
+     * @param string $email Recipient email address
+     * @param string $subject Email subject
+     * @param string $message Email body (HTML supported)
+     * 
+     * @return array Status and message OR error details
+     */
     public static function sendEmail($email, $subject, $message)
     {
         $mail = new PHPMailer(true);

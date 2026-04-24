@@ -39,6 +39,14 @@ class Enrollments
         }
     }
 
+    /**
+     * Enroll a student into a course
+     *
+     * @param int $student_id Student ID
+     * @param int $course_instructor_id Course-Instructor mapping ID
+     * 
+     * @return array Status and inserted enrollment ID OR error message
+     */
     public function enrollStudent($student_id, $course_instructor_id)
     {
         try {
@@ -53,6 +61,13 @@ class Enrollments
         }
     }
 
+    /**
+     * Get instructors for a specific course
+     *
+     * @param int $course_id Course ID
+     * 
+     * @return array Status and instructor list OR error message
+     */
     public function getInstructorPerCourse($course_id)
     {
         try {
@@ -78,6 +93,14 @@ class Enrollments
         }
     }
 
+    /**
+     * Get all enrollments with pagination
+     *
+     * @param int $page Current page number
+     * @param int $limit Number of records per page
+     * 
+     * @return array Status and enrollment data OR error message
+     */
     public function allEnrollments($page, $limit)
     {
         try {
@@ -112,6 +135,13 @@ class Enrollments
         }
     }
 
+    /**
+     * Cancel an enrollment
+     *
+     * @param int $id Enrollment ID
+     * 
+     * @return array Status and message
+     */
     public function deleteEnrollment($id)
     {
         try {
@@ -126,6 +156,13 @@ class Enrollments
         }
     }
 
+    /**
+     * Activate an enrollment
+     *
+     * @param int $id Enrollment ID
+     * 
+     * @return array Status and message
+     */
     public function activeEnrollment($id)
     {
         try {
