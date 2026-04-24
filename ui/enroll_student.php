@@ -91,11 +91,6 @@ $courses = $courseObj->getOptionCourses();
             function findInstructors() {
                 const courseId = document.getElementById("course_id").value;
 
-                if (!courseId) {
-                    alert("Please select a course first");
-                    return;
-                }
-
                 fetch(`/course-management/handlers/enrollStudent.php?course_id=${courseId}`)
                     .then(res => res.json())
                     .then(data => {
