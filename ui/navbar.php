@@ -18,7 +18,7 @@
             <li><a href="allEnrollments.php?tab=enrollments">All Enrollments</a></li>
             <li><a href="courseWithInstructor.php?tab=courses">Courses</a></li>
             <li><a href="admin_create_user.php">Create User</a></li>
-            <li><a href="enrollStudent.php">Enroll Student</a></li>
+            <li><a href="enroll_student.php">Enroll Student</a></li>
             <li><a href="createCourse.php">Create Course</a></li>
             <li><a href="assignInstructor.php">Assign Instructor</a></li>
 

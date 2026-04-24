@@ -39,13 +39,52 @@ class Enrollments
         }
     }
 
+    public function enrollStudent($student_id, $course_instructor_id)
+    {
+        try {
+            $sql = "INSERT INTO enrollments(student_id,course_instructor_id) VALUES (? , ?)";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bind_param("ii", $student_id, $course_instructor_id);
+            $stmt->execute();
+
+            return ["status" => true, "id" => $this->conn->insert_id];
+        } catch (Exception $e) {
+            return ["status" => false, "message" => $e->getMessage()];
+        }
+    }
+
+    public function getInstructorPerCourse($course_id)
+    {
+        try {
+            $sql = "SELECT 
+                        ci.id as id,
+                        ci.instructor_id as instructor_id,
+                        u.name as name 
+                    FROM course_instructor ci 
+                    INNER JOIN users u on ci.instructor_id = u.id 
+                    WHERE course_id = ?";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bind_param("i", $course_id);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $data = [];
+
+            while ($row = $result->fetch_assoc()) {
+                $data[] = $row;
+            }
+            return ["status" => true, "data" => $data];
+        } catch (Exception $e) {
+            return ["status" => false, "message" => $e->getMessage()];
+        }
+    }
+
     public function allEnrollments($page, $limit)
     {
         try {
             $offset = ($page - 1) * $limit;
             $sql = "SELECT 
                         e.id as enrollment_id, 
-                        c.course_name as course_name, 
+                        c.course_name as course_name,
                         s.id as student_id, 
                         s.name as student_name, 
                         i.id as instructor_id, 
@@ -73,20 +112,22 @@ class Enrollments
         }
     }
 
-    public function deleteEnrollment($id){
-        try{
+    public function deleteEnrollment($id)
+    {
+        try {
             $sql = "update enrollments set status = 'Cancelled' where id = ?";
             $stmt = $this->conn->prepare($sql);
-            $stmt->bind_param("i",$id);
+            $stmt->bind_param("i", $id);
             $stmt->execute();
 
-            return["status" => true , "message" => "Enrollment Deleted Successfully!!"];
-        }catch(Exception $e){
-            return ["status" => false , "message" => $e->getMessage()];
+            return ["status" => true, "message" => "Enrollment Deleted Successfully!!"];
+        } catch (Exception $e) {
+            return ["status" => false, "message" => $e->getMessage()];
         }
     }
 
-    public function activeEnrollment($id){
+    public function activeEnrollment($id)
+    {
         try {
             $sql = "update enrollments set status = 'Enrolled' where id = ?";
             $stmt = $this->conn->prepare($sql);

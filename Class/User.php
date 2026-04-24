@@ -234,6 +234,22 @@ class User
         return $result->fetch_assoc();
     }
 
+    public function getStudents()
+    {
+        $sql = "SELECT id, name FROM users WHERE role = 'Student'";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+        $data = [];
+
+        while ($row = $result->fetch_assoc()) {
+            $data[] = $row;
+        }
+
+        return ["status" => true, "data" => $data];
+    }
+
     /**
      * Update user (partial update / PATCH-like behavior)
      *

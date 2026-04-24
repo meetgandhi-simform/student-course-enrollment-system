@@ -96,6 +96,25 @@ class Course
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
+    public function getOptionCourses()
+    {
+        try{
+            $sql = "SELECT id, course_name FROM courses";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute();
+            $result = $stmt->get_result();
+
+            $data = [];
+
+            while($row = $result->fetch_assoc()){
+                $data[] = $row;
+            }
+            return ["status" => true , "data" => $data];
+        }catch(Exception $e){
+            return ["status" => false , "message" => $e->getMessage()];
+        }
+    }
+
     /**
      * Get courses with instructor details (paginated)
      *
