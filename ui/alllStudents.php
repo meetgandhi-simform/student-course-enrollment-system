@@ -1,5 +1,6 @@
 <?php
 require __DIR__ . "./../handlers/adminDashboardHandler.php";
+require __DIR__ . "./../helper/MailHelper.php";
 ?>
 
 <!DOCTYPE html>
@@ -47,7 +48,8 @@ require __DIR__ . "./../handlers/adminDashboardHandler.php";
                         </span>
                     </td>
                     <td>
-                        <?php if($student['isActive'] === 'Active'): ?>
+                        <?php if ($student['isActive'] === 'Active'):
+                        ?>
                             <a class="delete-btn"
                                 href="/course-management/auth/Delete.php?id=<?= $student['id']; ?>"
                                 onclick="return confirm('Are you sure?')">
@@ -61,7 +63,6 @@ require __DIR__ . "./../handlers/adminDashboardHandler.php";
                                 onclick="return confirm('Are You sure You want to activate this user? ')">Activate User
                             </a>
                         <?php endif; ?>
-
                     </td>
                 </tr>
             <?php endforeach; ?>

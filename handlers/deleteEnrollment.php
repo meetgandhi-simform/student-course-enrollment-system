@@ -21,7 +21,7 @@ $obj = new Enrollments();
 $result = $obj->deleteEnrollment($enrollment_id);
 
 if ($result['status'] === true) {
-    echo"<script>
+    echo "<script>
         window.history.back();
     </script>";
 } else {
