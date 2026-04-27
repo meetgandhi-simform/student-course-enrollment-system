@@ -37,7 +37,7 @@ $courses = $courseObj->getOptionCourses();
 
         <!-- Messages -->
         <?php if (isset($_SESSION['error'])): ?>
-            <p style="color:red;">
+            <p class="error">
                 <?= $_SESSION['error'];
                 unset($_SESSION['error']); ?>
             </p>

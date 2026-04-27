@@ -22,7 +22,7 @@
             <input type="password" name="password" id="password" required>
 
             <label for="captcha">Captcha</label>
-            <div style="display:flex; align-items:center; gap:10px;">
+            <div id="captcha">
                 <img src="/course-management/auth/captcha.php" id="captcha_img" alt="Captcha">
                 <button type="button" id="btn">Refresh</button>
             </div>

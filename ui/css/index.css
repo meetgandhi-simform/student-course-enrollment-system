@@ -483,3 +483,11 @@ body {
 .show {
   display: block;
 }
+#captcha{
+  display:flex; 
+  align-items:center; 
+  gap:10px;
+}
+.error{
+  color:red;
+}

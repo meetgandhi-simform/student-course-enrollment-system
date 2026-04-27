@@ -28,7 +28,7 @@ if (!$student) {
 
 $result = $userObj->deleteUsers($id);
 
-if ($result['status'] === true) {
+if ($result['status']) {
 
     $email = $student['email'];
     $subject = "Account Deactivation Notice - Student Enrollment System";
@@ -54,7 +54,7 @@ if ($result['status'] === true) {
 
     $mail = MailHelper::sendEmail($email, $subject, $message);
 
-    if ($mail['status'] === false) {
+    if (!$mail['status']) {
         $_SESSION['error'] = "User deleted, but email failed";
     }
 } else {

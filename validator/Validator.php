@@ -176,7 +176,7 @@ class Validator
         $weeks = trim($weeks);
 
         try {
-            if ($weeks === '') {
+            if (empty($weeks)) {
                 throw new Exception("Duration is required");
             }
 
@@ -201,7 +201,7 @@ class Validator
         $seats = trim($seats);
 
         try {
-            if ($seats === '') {
+            if (empty($seats)) {
                 throw new Exception("Seats are required");
             }
 
