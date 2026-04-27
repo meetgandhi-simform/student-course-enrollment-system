@@ -62,7 +62,7 @@ $courses = $courseObj->getOptionCourses();
 
             <!-- Course Dropdown -->
             <label for="course_id">Course:</label>
-            <select id="course_id" onchange="findInstructors()" required>
+            <select id="course_id" name="course_id" onchange="findInstructors()" required>
                 <option value="">Select Course</option>
                 <?php if ($courses['status']): ?>
                     <?php foreach ($courses['data'] as $course): ?>
@@ -87,29 +87,7 @@ $courses = $courseObj->getOptionCourses();
 
         </form>
 
-        <script>
-            function findInstructors() {
-                const courseId = document.getElementById("course_id").value;
-
-                fetch(`/course-management/handlers/enrollStudent.php?course_id=${courseId}`)
-                    .then(res => res.json())
-                    .then(data => {
-                        const dropdown = document.getElementById("instructor_dropdown");
-                        dropdown.innerHTML = '<option value="">Select Instructor</option>';
-                        data.forEach(row => {
-                            const option = document.createElement("option");
-                            option.value = row.id;
-                            option.text = row.id + " - " + row.name;
-                            dropdown.appendChild(option);
-                        });
-                    })
-                    .catch(err => {
-                        console.error(err);
-                        alert("Something went wrong");
-                    });
-            }
-        </script>
-
+        <script src="./../ui/js/enrollStudent.js"></script>
 </body>
 
 </html>

@@ -118,6 +118,7 @@ class Enrollments
                     INNER JOIN course_instructor ci ON ci.id = e.course_instructor_id
                     INNER JOIN users i ON ci.instructor_id = i.id
                     INNER JOIN courses c ON ci.course_id = c.id
+                    ORDER BY e.id
                     LIMIT ? OFFSET ?";
             $stmt = $this->conn->prepare($sql);
             $stmt->bind_param("ii", $limit, $offset);

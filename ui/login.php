@@ -21,6 +21,14 @@
             <label for="password">Password</label>
             <input type="password" name="password" id="password" required>
 
+            <label for="captcha">Captcha</label>
+            <div style="display:flex; align-items:center; gap:10px;">
+                <img src="/course-management/auth/captcha.php" id="captcha_img" alt="Captcha">
+                <button type="button" id="btn">Refresh</button>
+            </div>
+
+            <input type="text" name="captcha" id="captcha" placeholder="Enter Captcha" required>
+
             <button type="submit">Login</button>
 
             <p class="auth-link">
@@ -29,6 +37,8 @@
 
         </form>
     </div>
+
+    <script src="./../ui/js/captcha.js"></script>
 
 </body>
 

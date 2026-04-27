@@ -83,18 +83,18 @@ require_once __DIR__ . "./../handlers/adminDashboardHandler.php";
         <div class="pagination">
 
             <?php if ($admin_page > 1): ?>
-                <a href="?admin_page=<?= $admin_page - 1 ?>">⬅</a>
+                <a href="?tab=admins&admin_page=<?= $admin_page - 1 ?>">⬅</a>
             <?php endif; ?>
 
             <?php for ($i = 1; $i <= $totalAdminPages; $i++): ?>
-                <a href="?admin_page=<?= $i ?>"
+                <a href="?tab=admins&admin_page=<?= $i ?>"
                     class="<?= ($i == $admin_page) ? 'active' : '' ?>">
                     <?= $i ?>
                 </a>
             <?php endfor; ?>
 
             <?php if ($admin_page < $totalAdminPages): ?>
-                <a href="?admin_page=<?= $admin_page + 1 ?>">➡</a>
+                <a href="?tab=admins&admin_page=<?= $admin_page + 1 ?>">➡</a>
             <?php endif; ?>
 
         </div>

@@ -28,24 +28,24 @@ $courses = $course->getCourses();
 
         <form method="POST" action="/course-management/handlers/assignInstructorHandler.php">
 
-            <label>Instructor</label>
-            <select name="instructor_id" required>
-                <option value="">Select Instructor</option>
-                <?php foreach ($instructors as $inst): ?>
-                    <option value="<?= $inst['id'] ?>">
-                        <?= $inst['id'] ?> -
-                        <?= $inst['name'] ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-
-            <label>Course</label>
-            <select name="course_id" required>
+            <label for="course">Course</label>
+            <select name="course_id" id="course" required>
                 <option value="">Select Course</option>
                 <?php foreach ($courses as $course): ?>
                     <option value="<?= $course['id'] ?>">
                         <?= $course['id'] ?> -
                         <?= $course['course_name'] ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+
+            <label for="instructor">Instructor</label>
+            <select name="instructor_id" id="instructor" required>
+                <option value="">Select Instructor</option>
+                <?php foreach ($instructors as $inst): ?>
+                    <option value="<?= $inst['id'] ?>">
+                        <?= $inst['id'] ?> -
+                        <?= $inst['name'] ?>
                     </option>
                 <?php endforeach; ?>
             </select>

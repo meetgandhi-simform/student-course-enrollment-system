@@ -70,7 +70,7 @@ class User
     {
         try {
             $offset = ($page - 1) * $limit;
-            $sql = "SELECT * FROM users WHERE role = 'Admin' LIMIT ? OFFSET ?";
+            $sql = "SELECT * FROM users WHERE role = 'Admin' ORDER BY id LIMIT ? OFFSET ?";
             $stmt = $this->conn->prepare($sql);
             $stmt->bind_param("ii", $limit, $offset);
             $stmt->execute();

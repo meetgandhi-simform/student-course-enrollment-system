@@ -2,54 +2,72 @@
 
 session_start();
 
-require_once __DIR__ . "/./../helper/auth.php";
-require_once __DIR__ . "/./../Class/Enrollments.php";
+require_once __DIR__ . "/../helper/auth.php";
+require_once __DIR__ . "/../Class/Enrollments.php";
+require_once __DIR__ . "/../Class/Course.php";
 
 requireRole('admin');
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-    if (!isset($_POST['student_id'], $_POST['course_instructor_id'])) {
-        $_SESSION['error'] = "Invalid Request!!";
-        header("Location: /course-management/ui/enroll_student.php");
-        exit();
-    }
-
-    $student_id = (int) $_POST['student_id'];
-    $course_instructor_id = (int) $_POST['course_instructor_id'];
-
-    if ($student_id <= 0 || $course_instructor_id <= 0) {
-        $_SESSION['error'] = "Invalid data!";
-        header("Location: /course-management/ui/enroll_student.php");
-        exit();
-    }
-
-    $obj = new Enrollments();
-    $result = $obj->enrollStudent($student_id, $course_instructor_id);
-
-    if ($result['status']) {
-        echo "<script>
-                alert('Student enrolled successfully!')
-                window.location.href = '/course-management/ui/allEnrollments.php?tab=enrollments';
-            </script>";
-    } else {
-        $_SESSION['error'] = $result['message'];
-    }
-
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    $_SESSION['error'] = "Invalid request!";
     header("Location: /course-management/ui/enroll_student.php");
     exit();
 }
 
-$course_id = $_GET['course_id'];
-
-$enrollobj = new Enrollments();
-
-$result = $enrollobj->getInstructorPerCourse($course_id);
-
-if ($result['status'] === true) {
-    $instructor = $result['data'];
-
-    header("Content-Type: application/json");
-    echo json_encode($instructor);
-    exit;
+// Validate input
+if (!isset($_POST['student_id'], $_POST['course_instructor_id'], $_POST['course_id'])) {
+    $_SESSION['error'] = "Invalid Request!";
+    header("Location: /course-management/ui/enroll_student.php");
+    exit();
 }
+
+$student_id = (int) $_POST['student_id'];
+$course_instructor_id = (int) $_POST['course_instructor_id'];
+$course_id = (int) $_POST['course_id'];
+
+if ($student_id <= 0 || $course_instructor_id <= 0 || $course_id <= 0) {
+    $_SESSION['error'] = "Invalid data!";
+    header("Location: /course-management/ui/enroll_student.php");
+    exit();
+}
+
+$enrollObj = new Enrollments();
+$courseObj = new Course();
+
+
+$course = $courseObj->getCourseById($course_id);
+
+if (!$course['status']) {
+    $_SESSION['error'] = "Course not found!";
+    header("Location: /course-management/ui/enroll_student.php");
+    exit();
+}
+
+if ($course['data']['avail_seats'] <= 0) {
+    $_SESSION['error'] = "No seats available for this course!";
+    header("Location: /course-management/ui/enroll_student.php");
+    exit();
+}
+
+
+$result = $enrollObj->enrollStudent($student_id, $course_instructor_id);
+
+if (!$result['status']) {
+    $_SESSION['error'] = $result['message'];
+    header("Location: /course-management/ui/enroll_student.php");
+    exit();
+}
+
+$courseResult = $courseObj->updateSeats($course_id);
+
+if (!$courseResult['status']) {
+    $_SESSION['error'] = $courseResult['message'];
+    header("Location: /course-management/ui/enroll_student.php");
+    exit();
+}
+
+
+$_SESSION['success'] = "Student enrolled successfully!";
+header("Location: /course-management/ui/allEnrollments.php?tab=enrollments");
+exit();
+?>

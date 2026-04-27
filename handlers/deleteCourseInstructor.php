@@ -23,7 +23,7 @@ $instructor_id = (int)$_GET['instructor_id'];
 $obj = new Course();
 $result = $obj->deleteCourseInstructor($course_id, $instructor_id);
 
-if ($result['status'] === true) {
+if ($result['status'] === true || $courseResult['status']) {
     echo "<script>window.history.back();</script>";
 } else {
     $_SESSION['error'] = $result['message'];

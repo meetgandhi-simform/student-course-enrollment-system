@@ -39,7 +39,7 @@ class Instructor
     {
         try {
             $offset = ($page - 1) * $limit;
-            $sql = "SELECT id, name, email, phone, role, isActive FROM users WHERE role = 'Instructor' LIMIT ? OFFSET ?";
+            $sql = "SELECT id, name, email, phone, role, isActive FROM users WHERE role = 'Instructor' ORDER BY id LIMIT ? OFFSET ?";
             $stmt = $this->conn->prepare($sql);
             $stmt->bind_param('ii', $limit, $offset);
             $stmt->execute();

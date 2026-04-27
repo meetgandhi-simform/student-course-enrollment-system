@@ -47,9 +47,9 @@ class Course
     public function createCourse($name, $durationInWeeks, $seats)
     {
         try {
-            $sql = "INSERT INTO courses(course_name,duration_weeks,max_seats) VALUES (?,?,?)";
+            $sql = "INSERT INTO courses(course_name,duration_weeks,max_seats,avail_seats) VALUES (?,?,?,?)";
             $stmt = $this->conn->prepare($sql);
-            $stmt->bind_param("sii", $name, $durationInWeeks, $seats);
+            $stmt->bind_param("siii", $name, $durationInWeeks, $seats, $seats);
             $stmt->execute();
 
             return $this->conn->insert_id;
@@ -131,9 +131,11 @@ class Course
     {
         try {
             $offset = ($page - 1) * $limit;
-            $sql = "SELECT c.id,c.course_name,c.max_seats,ci.instructor_id,u.name,u.isActive FROM courses c
+            $sql = "SELECT c.id,c.course_name,c.max_seats,c.avail_seats,ci.instructor_id,u.name,u.isActive FROM courses c
                 INNER JOIN course_instructor ci ON c.id = ci.course_id
-                INNER JOIN users u on u.id = ci.instructor_id LIMIT ? OFFSET ?";
+                INNER JOIN users u on u.id = ci.instructor_id
+                ORDER BY c.id
+                LIMIT ? OFFSET ?";
             $stmt = $this->conn->prepare($sql);
             $stmt->bind_param("ii", $limit, $offset);
             $stmt->execute();
@@ -208,5 +210,57 @@ class Course
         } catch (Exception $e) {
             return ["status" => false, "message" => $e->getMessage()];
         }
+    }
+
+    /**
+     * Update available seats for a course
+     *
+     * Decreases available seats by 1 only if seats are available.
+     *
+     * @param int $course_id Course ID
+     * 
+     * @return array Status and message
+     */
+    public function updateSeats($course_id)
+    {
+        try {
+            $sql = "UPDATE courses 
+                SET avail_seats = avail_seats - 1 
+                WHERE id = ? AND avail_seats > 0";
+
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bind_param("i", $course_id);
+            $stmt->execute();
+
+            return ["status" => true, "message" => "Seats updated successfully!"];
+        } catch (Exception $e) {
+            return ["status" => false, "message" => $e->getMessage()];
+        }
+    }
+
+    /**
+     * Get course details by ID
+     *
+     * Fetches course ID and available seats.
+     *
+     * @param int $course_id Course ID
+     * 
+     * @return array Status and data OR false status if not found
+     */
+    public function getCourseById($course_id)
+    {
+        $sql = "SELECT id, avail_seats FROM courses WHERE id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("i", $course_id);
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+        $data = $result->fetch_assoc();
+
+        if ($data) {
+            return ["status" => true, "data" => $data];
+        }
+
+        return ["status" => false];
     }
 }

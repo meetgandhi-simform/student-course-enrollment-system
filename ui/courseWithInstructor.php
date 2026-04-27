@@ -41,7 +41,7 @@ require __DIR__ . "./../handlers/adminDashboardHandler.php";
                     <tr>
                         <td><?= $course['id']; ?></td>
                         <td><?= $course['course_name']; ?></td>
-                        <td><?= $course['max_seats']; ?></td>
+                        <td><?= $course['avail_seats'] ?> / <?= $course['max_seats']; ?></td>
                         <td><?= $course['instructor_id']; ?></td>
                         <td><?= $course['name']; ?></td>
                         <td>
@@ -53,7 +53,7 @@ require __DIR__ . "./../handlers/adminDashboardHandler.php";
                             <a class="delete-btn"
                                 href="/course-management/handlers/deleteCourseInstructor.php?course_id=<?= $course['id']; ?>&instructor_id=<?= $course['instructor_id']; ?>"
                                 onclick="return confirm('Remove instructor from this course?')">
-                                Delete
+                                Remove Instructor
                             </a>
                         </td>
                     </tr>
@@ -65,18 +65,18 @@ require __DIR__ . "./../handlers/adminDashboardHandler.php";
         <div class="pagination">
 
             <?php if ($course_page > 1): ?>
-                <a href="?course_page=<?= $course_page - 1 ?>">⬅</a>
+                <a href="?tab=courses&course_page=<?= $course_page - 1 ?>">⬅</a>
             <?php endif; ?>
 
             <?php for ($i = 1; $i <= $totalCourseWithInstructorPages; $i++): ?>
-                <a href="?course_page=<?= $i ?>"
+                <a href="?tab=courses&course_page=<?= $i ?>"
                     class="<?= ($i == $course_page) ? 'active' : '' ?>">
                     <?= $i ?>
                 </a>
             <?php endfor; ?>
 
             <?php if ($course_page < $totalCourseWithInstructorPages): ?>
-                <a href="?course_page=<?= $course_page + 1 ?>">➡</a>
+                <a href="?tab=courses&course_page=<?= $course_page + 1 ?>">➡</a>
             <?php endif; ?>
 
         </div>

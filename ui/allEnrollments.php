@@ -14,6 +14,13 @@ require_once __DIR__ . "./../handlers/adminDashboardHandler.php";
 <body>
     <?php require 'navbar.php'; ?>
 
+    <?php if (isset($_SESSION['success'])): ?>
+        <p style="color:green;">
+            <?= $_SESSION['success'];
+            unset($_SESSION['success']); ?>
+        </p>
+    <?php endif; ?>
+
     <?php if (isset($_SESSION['error'])): ?>
         <p class="error"><?= htmlspecialchars($_SESSION['error']) ?></p>
         <?php unset($_SESSION['error']); ?>
@@ -71,12 +78,12 @@ require_once __DIR__ . "./../handlers/adminDashboardHandler.php";
 
             <!-- Previous Button -->
             <?php if ($enrollment_page > 1): ?>
-                <a href="?enrollment_page=<?= $enrollment_page - 1 ?>">⬅</a>
+                <a href="?tab=enrollments&enrollment_page=<?= $enrollment_page - 1 ?>">⬅</a>
             <?php endif; ?>
 
             <!-- Page Numbers -->
             <?php for ($i = 1; $i <= $totalEnrollmentPages; $i++): ?>
-                <a href="?enrollment_page=<?= $i ?>"
+                <a href="?tab=enrollments&enrollment_page=<?= $i ?>"
                     class="<?= ($i == $enrollment_page) ? 'active' : '' ?>">
                     <?= $i ?>
                 </a>
@@ -84,7 +91,7 @@ require_once __DIR__ . "./../handlers/adminDashboardHandler.php";
 
             <!-- Next Button -->
             <?php if ($enrollment_page < $totalEnrollmentPages): ?>
-                <a href="?enrollment_page=<?= $enrollment_page + 1 ?>">➡</a>
+                <a href="?tab=enrollments&enrollment_page=<?= $enrollment_page + 1 ?>">➡</a>
             <?php endif; ?>
 
         </div>
