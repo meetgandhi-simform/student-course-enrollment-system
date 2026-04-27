@@ -69,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>";
 
         $mail = MailHelper::sendEmail($email['data'], $subject, $message);
-        if ($mail['status'] == true) {
+        if ($mail['status']) {
             echo "<script>
                     alert('Registered Successfully!');
                     window.location.href = '/course-management/ui/login.php';
