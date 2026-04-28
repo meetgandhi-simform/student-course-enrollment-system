@@ -57,6 +57,42 @@ class User
         }
     }
 
+    public function bulkInsertUsers($data)
+    {
+        $this->conn->begin_transaction();
+
+        try {
+            $sql = "INSERT INTO users (name, email, password, phone, role)
+                VALUES (?, ?, ?, ?, ?)";
+
+            $stmt = $this->conn->prepare($sql);
+            $count = 0;
+            foreach ($data as $row) {
+                if ($row['is_valid']) {
+                    $count++;
+                    $hashedPassword = password_hash($row['password'], PASSWORD_DEFAULT);
+
+                    $stmt->bind_param(
+                        "sssss",
+                        $row['name'],
+                        $row['email'],
+                        $hashedPassword,
+                        $row['phone'],
+                        $row['role']
+                    );
+
+                    $stmt->execute();
+                    
+                }
+            }
+            $this->conn->commit();
+            return ["status" => true, "inserted" => $count];
+        } catch (Exception $e) {
+            $this->conn->rollback();
+            return ["status" => false, "message" => $e->getMessage()];
+        }
+    }
+
     /**
      * Get paginated list of admins
      *

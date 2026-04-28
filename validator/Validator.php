@@ -220,4 +220,30 @@ class Validator
             ];
         }
     }
+    public static function role($role)
+    {
+        $role = trim($role);
+
+        try {
+            if (empty($role)) {
+                throw new Exception("Role is required");
+            }
+            
+            $allowedRoles = ['Admin', 'Instructor'];
+
+            if (!in_array($role, $allowedRoles)) {
+                throw new Exception("Role must be either Admin or Instructor");
+            }
+
+            return [
+                "status" => true,
+                "data" => htmlspecialchars($role)
+            ];
+        } catch (Exception $e) {
+            return [
+                "status" => false,
+                "message" => $e->getMessage()
+            ];
+        }
+    }
 }
