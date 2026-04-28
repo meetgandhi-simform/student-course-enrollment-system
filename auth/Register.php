@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit();
     }
 
-    $id = $user->createUser(
+    $result = $user->createUser(
         $name['data'],
         $email['data'],
         $password['data'],
@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $role
     );
 
-    if ($id) {
+    if ($result['status']) {
         $subject = 'Registration Success Emai;';
         $message = "
             <div style='font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;'>
@@ -79,6 +79,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             echo "<script>alert(" . json_encode($mail['message']) . ");</script>";
         }
     } else {
-        echo "Error!";
+        echo "<script>
+                    alert(" . json_encode($result['message']) . ")
+                    window.location.href = '/course-management/ui/register.php';
+            </script>";
     }
 }

@@ -62,7 +62,7 @@ if ($tab === 'instructors') {
         $_SESSION['error'] = $instructorResponse['message'];
     }
 
-    if ($instructorObj->countInstructor()['status'] !== false) {
+    if ($instructorObj->countInstructor()['status']) {
         $totalInstructors = $instructorObj->countInstructor()['count'];
     } else {
         $totalInstructors = [];
@@ -83,7 +83,7 @@ if ($tab === 'admins') {
         $_SESSION['error'] = $adminResponse['message'];
     }
 
-    if ($userObj->countAdmins()['status'] !== false) {
+    if ($userObj->countAdmins()['status']) {
         $totalAdmins = $userObj->countAdmins()['count'];
     } else {
         $totalAdmins = [];
@@ -104,7 +104,7 @@ if ($tab === 'courses') {
         $_SESSION['error'] = $courseWithInstructorResponse['message'];
     }
 
-    if ($courseObj->countCourseWithInstructor()['status'] !== false) {
+    if ($courseObj->countCourseWithInstructor()['status']) {
         $totalCourseWithInstructor = $courseObj->countCourseWithInstructor()['count'];
     } else {
         $totalCourseWithInstructor = [];
@@ -124,7 +124,7 @@ if ($tab === 'enrollments') {
         $_SESSION['error'] = $enrollmentResponse['message'];
     }
 
-    if ($enrollObj->countEnrollments()['status'] !== false) {
+    if ($enrollObj->countEnrollments()['status']) {
         $totalEnrollments = $enrollObj->countEnrollments()['count'];
     } else {
         $totalEnrollments = [];
@@ -134,41 +134,41 @@ if ($tab === 'enrollments') {
     $totalEnrollmentPages = ceil($totalEnrollments / $limit);
 }
 
-if ($userObj->countAdmins()['status'] !== false) {
+if ($userObj->countAdmins()['status']) {
     $totalAdmins = $userObj->countAdmins()['count'];
 } else {
     $totalAdmins = [];
     $_SESSION['error'] = $userObj->countAdmins()['message'];
 }
 
-if ($userObj->countStudents()['status'] !== false) {
+if ($userObj->countStudents()['status']) {
     $totalStudents = $userObj->countStudents()['count'];
 } else {
     $totalStudents = [];
     $_SESSION['error'] = $userObj->countStudents()['message'];
 }
 
-if ($instructorObj->countInstructor()['status'] !== false) {
+if ($instructorObj->countInstructor()['status']) {
     $totalInstructors = $instructorObj->countInstructor()['count'];
 } else {
     $totalInstructors = [];
     $_SESSION['error'] = $instructorObj->countInstructor()['message'];
 }
 
-if ($courseObj->countCourses()['status'] !== false) {
+if ($courseObj->countCourses()['status']) {
     $totalCourses = $courseObj->countCourses()['count'];
 } else {
     $totalCourses = [];
     $_SESSION['error'] = $courseObj->countCourses()['message'];
 }
 
-if ($userObj->countActiveUsers()['status'] !== false) {
+if ($userObj->countActiveUsers()['status']) {
     $totalActiveUsers = $userObj->countActiveUsers()['count'];
 } else {
     $totalActiveUsers = [];
     $_SESSION['error'] = $userObj->countActiveUsers()['message'];
 }
-if ($enrollObj->countEnrollments()['status'] !== false) {
+if ($enrollObj->countEnrollments()['status']) {
     $totalEnrollments = $enrollObj->countEnrollments()['count'];
 } else {
     $totalEnrollments = [];

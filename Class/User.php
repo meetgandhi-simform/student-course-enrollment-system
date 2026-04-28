@@ -310,4 +310,86 @@ class User
             return ["status" => false, "message" => $e->getMessage()];
         }
     }
+
+    /**
+     * Get paginated list of students enrolled under a specific instructor
+     *
+     * @param int $instructor_id Instructor ID
+     * @param int $page Current page number
+     * @param int $limit Number of records per page
+     *
+     * @return array{
+     *     status: bool,
+     *     data?: array<int, array{
+     *         id:int,
+     *         name:string,
+     *         email:string,
+     *         phone:int,
+     *         course_name:string,
+     *         isActive:int
+     *     }>,
+     *     message?: string
+     * }
+     */
+    public function getStudentsByInstructor($instructor_id, $page, $limit)
+    {
+        try {
+            $offset = ($page - 1) * $limit;
+            $sql = "SELECT 
+                        us.id,
+                        us.name,
+                        us.email,
+                        us.phone,
+                        c.course_name,
+                        us.isActive 
+                    FROM enrollments e
+                    JOIN course_instructor ci ON ci.id = e.course_instructor_id
+                    JOIN courses c ON c.id = ci.course_id
+                    JOIN users us ON us.id = e.student_id
+                    WHERE ci.instructor_id = ?
+                    LIMIT ? OFFSET ?";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bind_param("iii", $instructor_id, $limit, $offset);
+            $stmt->execute();
+
+            $result = $stmt->get_result();
+            $data = [];
+
+            while ($row = $result->fetch_assoc()) {
+                $data[] = $row;
+            }
+
+            return ["status" => true, "data" => $data];
+        } catch (Exception $e) {
+            return ["status" => false, "message" => $e->getMessage()];
+        }
+    }
+
+    /**
+     * Count total students enrolled under a specific instructor
+     *
+     * @param int $instructor_id Instructor ID
+     *
+     * @return array{status: bool, total?: int, message?: string}
+     */
+    public function countStudentsByInstructor($instructor_id)
+    {
+        try {
+            $sql = "SELECT COUNT(*) as total
+                FROM enrollments e
+                JOIN course_instructor ci ON ci.id = e.course_instructor_id
+                WHERE ci.instructor_id = ?";
+
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bind_param("i", $instructor_id);
+            $stmt->execute();
+
+            $result = $stmt->get_result();
+            $row = $result->fetch_assoc();
+
+            return ["status" => true, "total" => $row['total']];
+        } catch (Exception $e) {
+            return ["status" => false, "message" => $e->getMessage()];
+        }
+    }
 }

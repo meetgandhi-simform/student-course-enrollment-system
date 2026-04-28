@@ -131,7 +131,15 @@ class Course
     {
         try {
             $offset = ($page - 1) * $limit;
-            $sql = "SELECT c.id,c.course_name,c.max_seats,c.avail_seats,ci.instructor_id,u.name,u.isActive FROM courses c
+            $sql = "SELECT 
+                        c.id,
+                        c.course_name,
+                        c.max_seats,
+                        c.avail_seats,
+                        ci.instructor_id,
+                        u.name,
+                        u.isActive 
+                FROM courses c
                 INNER JOIN course_instructor ci ON c.id = ci.course_id
                 INNER JOIN users u on u.id = ci.instructor_id
                 ORDER BY c.id
@@ -142,6 +150,111 @@ class Course
 
             $result = $stmt->get_result();
 
+            $data = [];
+
+            while ($row = $result->fetch_assoc()) {
+                $data[] = $row;
+            }
+            return ["status" => true, "data" => $data];
+        } catch (Exception $e) {
+            return ["status" => false, "message" => $e->getMessage()];
+        }
+    }
+
+    /**
+     * Get paginated list of courses assigned to a specific instructor
+     *
+     * @param int $instructor_id Instructor ID
+     * @param int $page Current page number
+     * @param int $limit Number of records per page
+     *
+     * @return array{status: bool, data?: array<int, array<string, mixed>>, message?: string}
+     */
+    public function getCourseByInstructor($instructor_id, $page, $limit)
+    {
+        try {
+            $offset = ($page - 1) * $limit;
+            $sql = "SELECT 
+	                    c.id,
+                        c.course_name,
+                        c.max_seats,
+                        c.avail_seats 
+                    FROM courses c 
+                    JOIN course_instructor ci ON c.id = ci.course_id
+                    WHERE ci.instructor_id = ?
+                    LIMIT ? OFFSET ?";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bind_param("iii", $instructor_id, $limit, $offset);
+            $stmt->execute();
+
+            $result = $stmt->get_result();
+
+            $data = [];
+
+            while ($row = $result->fetch_assoc()) {
+                $data[] = $row;
+            }
+            return ["status" => true, "data" => $data];
+        } catch (Exception $e) {
+            return ["status" => false, "message" => $e->getMessage()];
+        }
+    }
+
+    /**
+     * Count total courses assigned to a specific instructor
+     *
+     * @param int $instructor_id Instructor ID
+     *
+     * @return array{status: bool, count?: int, message?: string}
+     */
+    public function countCourseByInstructor($instructor_id)
+    {
+        try {
+            $sql = "SELECT COUNT(*) AS total 
+                FROM courses c
+                JOIN course_instructor ci ON c.id = ci.course_id
+                WHERE ci.instructor_id = ?";
+
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bind_param("i", $instructor_id);
+            $stmt->execute();
+
+            $result = $stmt->get_result();
+            $row = $result->fetch_assoc();
+
+            return [
+                "status" => true,
+                "count" => (int) $row['total']
+            ];
+        } catch (Exception $e) {
+            return [
+                "status" => false,
+                "message" => $e->getMessage()
+            ];
+        }
+    }
+
+    /**
+     * Get all courses (id & name) for dropdown/select options by instructor
+     *
+     * @param int $instructor_id Instructor ID
+     *
+     * @return array{status: bool, data?: array<int, array{id:int, course_name:string}>, message?: string}
+     */
+    public function getOptionCourseByInstructor($instructor_id)
+    {
+        try {
+            $sql = "SELECT 
+                        c.id ,
+                        c.course_name 
+                    FROM courses c 
+                    JOIN course_instructor ci ON ci.course_id = c.id
+                    WHERE ci.instructor_id = ?";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bind_param("i", $instructor_id);
+            $stmt->execute();
+
+            $result = $stmt->get_result();
             $data = [];
 
             while ($row = $result->fetch_assoc()) {

@@ -4,7 +4,7 @@ require_once __DIR__ . "/../Class/User.php";
 require_once __DIR__ . "./../helper/auth.php";
 
 // check
-requireRole('admin');
+requireRole(['admin', 'instructor']);
 
 // Validate ID
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
