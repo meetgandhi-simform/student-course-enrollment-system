@@ -57,6 +57,26 @@ class User
         }
     }
 
+    /**
+     * Bulk insert users from validated CSV data
+     *
+     * Iterates through the provided data array, inserts only valid rows,
+     * and skips rows containing validation errors. Uses transaction to ensure
+     * atomicity — either all valid inserts succeed or none are committed.
+     *
+     * @param array $data Array of user data where each item contains:
+     *                    - name (string)
+     *                    - email (string)
+     *                    - password (string, plain text)
+     *                    - phone (string)
+     *                    - role (string)
+     *                    - is_valid (bool)
+     *                    - errors (array)
+     *
+     * @return array Returns:
+     *               - ['status' => true, 'inserted' => int] on success
+     *               - ['status' => false, 'message' => string] on failure
+     */
     public function bulkInsertUsers($data)
     {
         $this->conn->begin_transaction();
