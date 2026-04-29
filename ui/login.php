@@ -23,7 +23,7 @@
 
             <label for="captcha">Captcha</label>
             <div id="captcha">
-                <img src="/course-management/auth/captcha.php" id="captcha_img" alt="Captcha">
+                <img src="/course-management/handlers/captchaHandler.php" id="captcha_img" alt="Captcha">
                 <button type="button" id="btn">Refresh</button>
             </div>
 

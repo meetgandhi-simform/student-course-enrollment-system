@@ -1,12 +1,12 @@
 <?php
 session_start();
 
-require_once __DIR__ . "./../../helper/auth.php";
-require __DIR__ . "./../../Class/User.php";
-require __DIR__ . "./../../Class/Course.php";
+require_once __DIR__ . "./../../helper/AuthHelper.php";
+require __DIR__ . "./../../class/User.php";
+require __DIR__ . "./../../class/Course.php";
 
-requireLogin();
-requireRole('instructor');
+AuthHelper::requireLogin();
+AuthHelper::requireRole('admin');
 
 $userObj = new User();
 $courseObj = new Course();

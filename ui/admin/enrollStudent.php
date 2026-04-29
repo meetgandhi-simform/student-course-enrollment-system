@@ -2,20 +2,20 @@
 
 session_start();
 
-require_once __DIR__ . '/../../helper/auth.php';
-requireRole('instructor');
+require_once __DIR__ . "/../../helper/AuthHelper.php";
+AuthHelper::requireRole('admin');
 
-require_once __DIR__ . '/../../class/User.php';
-require_once __DIR__ . '/../../class/Course.php';
-require_once __DIR__ . '/../../class/Enrollments.php';
+require_once __DIR__ . "/../../class/User.php";
+require_once __DIR__ . "/../../class/Course.php";
+require_once __DIR__ . "./../../class/Enrollments.php";
 
 $userObj = new User();
 $courseObj = new Course();
 $enrollObj = new Enrollments();
 
-
+// Using your updated function
 $students = $userObj->getStudents();
-$courses = $courseObj->getOptionCourseByInstructor($_SESSION['user_id']);
+$courses = $courseObj->getOptionCourses();
 
 ?>
 
@@ -25,12 +25,13 @@ $courses = $courseObj->getOptionCourseByInstructor($_SESSION['user_id']);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/ui/css/index.css">
+    <link rel="stylesheet" href="./../css/index.css">
     <title>Enroll Student</title>
 </head>
 
+<?php require_once 'navbar.php' ?>
+
 <body>
-    <?php require_once 'instructorNavbar.php' ?>
 
     <div class="form-container">
         <h2>Enroll Student</h2>
@@ -43,7 +44,7 @@ $courses = $courseObj->getOptionCourseByInstructor($_SESSION['user_id']);
             </p>
         <?php endif; ?>
 
-        <form method="POST" action="/course-management/handlers/instructorHandlers/enrollStudent.php">
+        <form method="POST" action="/course-management/handlers/adminHandlers/enrollStudent.php">
 
             <!-- Student Dropdown -->
             <label for="student">Student:</label>
@@ -87,7 +88,7 @@ $courses = $courseObj->getOptionCourseByInstructor($_SESSION['user_id']);
 
         </form>
 
-        <script src="./../../ui/js/enrollStudent.js"></script>
+        <script src="./../js/enrollStudent.js"></script>
 </body>
 
 </html>

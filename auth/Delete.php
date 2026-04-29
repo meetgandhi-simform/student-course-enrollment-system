@@ -1,14 +1,14 @@
 <?php
 session_start();
 
-require_once __DIR__ . "/../Class/User.php";
+require_once __DIR__ . "/../class/User.php";
 require_once __DIR__ . "/../helper/MailHelper.php";
-require_once __DIR__ . "./../helper/auth.php";
+require_once __DIR__ . "./../helper/AuthHelper.php";
 
-requireRole(['admin', 'instructor']);
+AuthHelper::requireRole(['admin', 'instructor']);
 
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
-    header("Location: /course-management/ui/admin_dashboard.php");
+    header("Location: /course-management/ui/admin/adminDashboard.php");
     exit();
 }
 
@@ -59,6 +59,5 @@ if ($result['status']) {
     $_SESSION['error'] = $result['message'];
 }
 
-// ✅ Proper redirect
 header("Location: " . $_SERVER['HTTP_REFERER']);
 exit();

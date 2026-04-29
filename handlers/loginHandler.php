@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . "/../helper/redirectUser.php";
+require_once __DIR__ . "/../helper/AuthHelper.php";
 require_once __DIR__ . "/../auth/Login.php";
 require_once __DIR__ . "/../validator/Validator.php";
 
@@ -54,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $_SESSION['isActive'] = $user['isActive'];
 
         if ($user['isActive'] === 'Active') {
-            redirectUser(strtolower($user['role']));
+            AuthHelper::redirectUser(strtolower($user['role']));
         } else {
             echo "<script>
                 alert('Your Account is Deactivated!!');

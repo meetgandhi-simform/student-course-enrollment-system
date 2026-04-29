@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . "./../Class/Database.php";
+require_once __DIR__ . "./../class/Database.php";
 
 /**
  * Class Login

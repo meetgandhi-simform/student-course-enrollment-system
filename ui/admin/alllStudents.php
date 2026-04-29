@@ -1,5 +1,5 @@
 <?php
-require __DIR__ . "./../../handlers/instructorHandlers/instructorDashboardHandler.php";
+require __DIR__ . "./../../handlers/adminHandlers/adminDashboardHandler.php";
 ?>
 
 <!DOCTYPE html>
@@ -8,12 +8,12 @@ require __DIR__ . "./../../handlers/instructorHandlers/instructorDashboardHandle
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./css/index.css">
+    <link rel="stylesheet" href="./../css/index.css">
     <title>All students</title>
 </head>
 
 <body>
-    <?php require_once 'instructorNavbar.php' ?>
+    <?php require 'navbar.php'; ?>
 
     <?php if (isset($_SESSION['error'])): ?>
         <p class="error"><?= htmlspecialchars($_SESSION['error']) ?></p>
@@ -21,15 +21,15 @@ require __DIR__ . "./../../handlers/instructorHandlers/instructorDashboardHandle
     <?php endif; ?>
 
     <div class="table-container">
-        <h2>All Enrollments</h2>
+        <h2>All Students</h2>
 
         <table class="custom-table">
             <tr>
-                <th>Student Id</th>
+                <th>Id</th>
                 <th>Name</th>
                 <th>Email</th>
                 <th>Phone</th>
-                <th>course</th>
+                <th>Role</th>
                 <th>Status</th>
                 <th>Action</th>
             </tr>
@@ -40,7 +40,7 @@ require __DIR__ . "./../../handlers/instructorHandlers/instructorDashboardHandle
                     <td><?= $student['name']; ?></td>
                     <td><?= $student['email']; ?></td>
                     <td><?= $student['phone']; ?></td>
-                    <td><?= $student['course_name'] ?></td>
+                    <td><?= $student['role']; ?></td>
                     <td>
                         <span class="status <?= strtolower($student['isActive']) ?>">
                             <?= $student['isActive']; ?>
@@ -70,18 +70,18 @@ require __DIR__ . "./../../handlers/instructorHandlers/instructorDashboardHandle
         <!-- Pagination -->
         <div class="pagination">
             <?php if ($student_page > 1): ?>
-                <a href="?tab=enrollments&student_page=<?= $student_page - 1 ?>">⬅</a>
+                <a href="?tab=students&student_page=<?= $student_page - 1 ?>">⬅</a>
             <?php endif; ?>
 
             <?php for ($i = 1; $i <= $totalStudentPages; $i++): ?>
-                <a href="?tab=enrollments&student_page=<?= $i ?>"
+                <a href="?tab=students&student_page=<?= $i ?>"
                     class="<?= ($i == $student_page) ? 'active' : '' ?>">
                     <?= $i ?>
                 </a>
             <?php endfor; ?>
 
             <?php if ($student_page < $totalStudentPages): ?>
-                <a href="?tab=enrollments&student_page=<?= $student_page + 1 ?>">➡</a>
+                <a href="?tab=students&student_page=<?= $student_page + 1 ?>">➡</a>
             <?php endif; ?>
         </div>
     </div>

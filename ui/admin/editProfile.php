@@ -25,12 +25,12 @@ if (!$user) {
 <head>
     <meta charset="UTF-8">
     <title>Edit Profile</title>
-    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./../css/index.css">
 </head>
 
 <body>
 
-    <?php require 'instructorNavbar.php'; ?>
+    <?php require 'navbar.php'; ?>
 
     <div class="form-container">
         <h2>Edit Profile</h2>
@@ -53,7 +53,6 @@ if (!$user) {
 
             <button type="submit">Update Profile</button>
         </form>
-
     </div>
 
 </body>

@@ -31,16 +31,16 @@ class MailHelper
 
         try {
             $mail->isSMTP();
-            $mail->Host       = $_ENV['emailhost'];
+            $mail->Host       = $_ENV['EMAIL_HOST'];
             $mail->SMTPAuth   = true;
-            $mail->Username   = $_ENV['emailusername'];
-            $mail->Password   = $_ENV['emailpassword'];
+            $mail->Username   = $_ENV['EMAIL_USERNAME'];
+            $mail->Password   = $_ENV['EMAIL_PASSWORD'];
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-            $mail->Port       = $_ENV['emailport'];
+            $mail->Port       = $_ENV['EMAIL_PORT'];
 
             $mail->CharSet = 'UTF-8';
 
-            $mail->setFrom($_ENV['emailusername'], $_ENV['name']);
+            $mail->setFrom($_ENV['EMAIL_USERNAME'], $_ENV['NAME']);
             $mail->addAddress($email);
 
             $mail->isHTML(true);

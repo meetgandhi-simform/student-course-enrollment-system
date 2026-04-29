@@ -1,10 +1,10 @@
 <?php
 
 require __DIR__ . "./../../handlers/instructorHandlers/instructorDashboardHandler.php";
-require_once __DIR__ . "./../../helper/auth.php";
+require_once __DIR__ . "./../../helper/AuthHelper.php";
 
-requireLogin();
-requireRole('instructor');
+AuthHelper::requireLogin();
+AuthHelper::requireRole('instructor');
 
 ?>
 
