@@ -34,11 +34,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         echo "<script>
         alert(" . json_encode($allErrors) . ");
-        window.location.href = '/course-management/ui/admin_create_user.php';
+        window.history.back();
     </script>";
         exit();
     }
-
 
     $user = new User();
     try {
