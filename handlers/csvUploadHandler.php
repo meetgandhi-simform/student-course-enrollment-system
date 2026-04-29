@@ -27,18 +27,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = [];
     $rowNumber = 0;
 
-    fgetcsv($handle, 1000, ",", '"', "\\"); // skip header
+
+    fgetcsv($handle, 1000, ",", '"', "\\");
 
     while (($row = fgetcsv($handle, 1000, ",", '"', "\\")) !== false) {
         $rowNumber++;
 
         $errors = [];
 
-        $name     = $row[0] ?? '';
-        $email    = $row[1] ?? '';
-        $password = $row[2] ?? '';
-        $phone    = $row[3] ?? '';
-        $role     = $row[4] ?? '';
+        $name     = trim($row[0] ?? '');
+        $email    = trim($row[1] ?? '');
+        $password = trim($row[2] ?? '');
+        $phone    = trim($row[3] ?? '');
+        $role     = trim($row[4] ?? '');
 
         if (count($row) < 5) {
             $errors[] = "Missing columns";
@@ -84,20 +85,53 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     fclose($handle);
 
-
     $userObj = new User();
     $result = $userObj->bulkInsertUsers($data);
-    if ($result['status']) {
+
+    $totalRows = count($data);
+    $invalidRows = array_filter($data, fn($row) => !$row['is_valid']);
+    $invalidCount = count($invalidRows);
+    $inserted = $result['inserted'] ?? 0;
+
+    if ($result['status'] && $inserted > 0 && $invalidCount === 0) {
+
         echo "<script>
-                 alert('Users uploaded successfully!');
-                 window.location.href = '/course-management/ui/admin_dashboard.php';
+            alert('All {$inserted} users uploaded successfully!');
+            window.location.href = '/course-management/ui/admin_dashboard.php';
+        </script>";
+    } elseif ($result['status'] && $inserted > 0 && $invalidCount > 0) {
+
+        $allErrors = [];
+
+        foreach ($invalidRows as $row) {
+            $allErrors[] = "Row {$row['row']}: " . implode(", ", $row['errors']);
+        }
+
+        $errorString = json_encode(implode("\n", $allErrors));
+
+        echo "<script>
+                alert('Partial Upload:\\nInserted: {$inserted}\\nFailed: {$invalidCount}\\n\\nErrors:\\n' + $errorString);
+                window.location.href = '/course-management/ui/admin_dashboard.php';
             </script>";
     } else {
+
+
+        $allErrors = [];
+
+        foreach ($invalidRows as $row) {
+            $allErrors[] = "Row {$row['row']}: " . implode(", ", $row['errors']);
+        }
+
+        if (empty($allErrors)) {
+            $allErrors[] = 'No valid rows inserted into database!';
+        }
+
+        $errorString = json_encode(implode("\n", $allErrors));
+
         echo "<script>
-                alert(".json_encode($result['message']). ");
+                alert('Upload Failed:\\n' + $errorString);
                 window.location.href = '/course-management/ui/admin_dashboard.php';
-        </script>";
+            </script>";
     }
 }
-
 ?>
