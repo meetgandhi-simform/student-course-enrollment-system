@@ -5,6 +5,7 @@ require_once __DIR__ . "./../../class/User.php";
 require_once __DIR__ . "./../../validator/Validator.php";
 require_once __DIR__ . "./../../helper/AuthHelper.php";
 require_once __DIR__ . "./../../helper/MailHelper.php";
+require_once __DIR__ . "./../../class/EmailQueue.php";
 
 AuthHelper::requireLogin();
 AuthHelper::requireRole('admin');
@@ -12,6 +13,7 @@ AuthHelper::requireRole('admin');
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $userObj = new User();
+    $emailQueueObj = new EmailQueue();
 
     $name = Validator::name($_POST['name']);
     $email = Validator::email($_POST['email']);
@@ -50,6 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             alert('Error: " . htmlspecialchars($e->getMessage()) . "');
             window.location.href = '/course-management/ui/admin/adminDashboard.php';
         </script>";
+    exit();
     }
     if ($result['status'] == true) {
         $emailAddress = $email['data'];
@@ -71,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <p>You can now log in using your credentials.</p>
 
                 <div style='text-align: center; margin-top: 20px;'>
-                    <a href='http://localhost:8103/course-management/ui/login.php' 
+                    <a href='http://172.16.7.30:8103/course-management/ui/login.php' 
                         style='background-color: #3498db; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;'>
                         Login Now
                     </a>
@@ -82,16 +85,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <p>Best Regards,<br>
             <b>Student Enrollment Team</b></p>
         </div>";
+            $queue = $emailQueueObj->addEmail($email['data'], $subject, $message);
 
-        $mail = MailHelper::sendEmail($email['data'], $subject, $message);
-        if ($mail['status'] == true) {
+            if (!$queue['status']) {
+                error_log("Email Queue Failed: " . $queue['message']);
+            }
             echo "<script>
-                    alert('User Created Successfully');
+                    alert('User created successfully');
                     window.location.href = '/course-management/ui/admin/adminDashboard.php';
                 </script>";
-        } else {
-            echo "<script>alert(" . json_encode($mail['message']) . ");</script>";
-        }
+    exit();
     } else {
         echo "<script>
         alert(" . json_encode($result['message']) . ");

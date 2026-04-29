@@ -1,6 +1,7 @@
 <?php
 
-require_once 'Database.php';
+
+require_once "EmailQueue.php";
 
 /**
  * Class User
@@ -58,24 +59,16 @@ class User
     }
 
     /**
-     * Bulk insert users from validated CSV data
+     * Bulk insert users and queue emails
      *
-     * Iterates through the provided data array, inserts only valid rows,
-     * and skips rows containing validation errors. Uses transaction to ensure
-     * atomicity — either all valid inserts succeed or none are committed.
+     * Inserts only valid rows from the provided data array.
+     * Passwords are hashed before storing. Skips invalid or failed rows.
+     * Queues welcome emails after successful insert.
      *
-     * @param array $data Array of user data where each item contains:
-     *                    - name (string)
-     *                    - email (string)
-     *                    - password (string, plain text)
-     *                    - phone (string)
-     *                    - role (string)
-     *                    - is_valid (bool)
-     *                    - errors (array)
+     * @param array $data Array of user records (validated)
      *
-     * @return array Returns:
-     *               - ['status' => true, 'inserted' => int] on success
-     *               - ['status' => false, 'message' => string] on failure
+     * @return array Returns ['status' => true, 'inserted' => int] on success
+     *               or ['status' => false, 'message' => string] on failure
      */
     public function bulkInsertUsers($data)
     {
@@ -84,14 +77,18 @@ class User
         try {
             $sql = "INSERT INTO users (name, email, password, phone, role)
                 VALUES (?, ?, ?, ?, ?)";
-
             $stmt = $this->conn->prepare($sql);
+            $emailQueueObj = new EmailQueue();
             $count = 0;
-            foreach ($data as $row) {
-                if ($row['is_valid']) {
-                    $count++;
-                    $hashedPassword = password_hash($row['password'], PASSWORD_DEFAULT);
 
+            foreach ($data as $row) {
+
+                if (!$row['is_valid']) {
+                    continue;
+                }
+
+                try {
+                    $hashedPassword = password_hash($row['password'], PASSWORD_DEFAULT);
                     $stmt->bind_param(
                         "sssss",
                         $row['name'],
@@ -100,16 +97,62 @@ class User
                         $row['phone'],
                         $row['role']
                     );
-
                     $stmt->execute();
-                    
+                    $count++;
+                    $subject = "Your Account Has Been Created - Student Enrollment System";
+                    $message = "
+            <div style='font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;'>
+
+                <h2 style='color: #2c3e50; text-align: center;'>🎓 Student Enrollment System</h2>
+                <p>Hello,</p>
+                <p>An administrator has created an account for you on the <b>Student Enrollment System</b>.</p>
+
+                <p style='background-color: #f4f6f7; padding: 10px; border-left: 4px solid #3498db;'>
+                    <b>Role:</b> {$row['role']} <br>
+                    <b>Email:</b> {$row['email']} <br>
+                    <b>Password:</b>{$row['password']} <br>
+                </p>
+
+                <p>You can now log in using your credentials.</p>
+
+                    <div style='text-align: center; margin-top: 20px;'>
+                        <a href='http://172.16.7.30:8103/course-management/ui/login.php' 
+                            style='background-color: #3498db; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;'>
+                            Login Now
+                        </a>
+                    </div>
+
+                <br>
+                <p>If you did not expect this email, please contact your administrator.</p>
+                <p>Best Regards,<br>
+                <b>Student Enrollment Team</b></p>
+        </div>";
+
+                    $emailQueueObj->addEmail(
+                        $row['email'],
+                        $subject,
+                        $message
+                    );
+                } catch (Exception $rowException) {
+                    error_log("Row failed: " . $rowException->getMessage());
+                    continue;
                 }
             }
+
             $this->conn->commit();
-            return ["status" => true, "inserted" => $count];
+
+            return [
+                "status" => true,
+                "inserted" => $count
+            ];
         } catch (Exception $e) {
+
             $this->conn->rollback();
-            return ["status" => false, "message" => $e->getMessage()];
+
+            return [
+                "status" => false,
+                "message" => $e->getMessage()
+            ];
         }
     }
 
