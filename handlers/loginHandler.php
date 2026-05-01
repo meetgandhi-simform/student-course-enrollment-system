@@ -18,17 +18,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (!$email['status']) $errors[] = $email['message'];
     if (!$password['status']) $errors[] = $password['message'];
 
-    // ✅ CAPTCHA VALIDATION
+
     if (!isset($_POST['captcha']) || !isset($_SESSION['captcha'])) {
         $errors[] = "Captcha missing!";
-        
+
     } else {
         if ($_POST['captcha'] !== $_SESSION['captcha']) {
             $errors[] = "Invalid captcha!";
         }
     }
 
-    // destroy captcha after check (important)
     unset($_SESSION['captcha']);
 
     if (!empty($errors)) {
@@ -41,7 +40,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit();
     }
 
-    // ✅ Proceed only if captcha + validation passed
     $user = $loginObj->login(
         $email['data'],
         $password['data']
@@ -55,18 +53,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($user['isActive'] === 'Active') {
             AuthHelper::redirectUser(strtolower($user['role']));
-        } else {
-            echo "<script>
-                alert('Your Account is Deactivated!!');
-                window.history.back();
-            </script>";
         }
-    } else {
-        echo "<script>
-            alert('Invalid Email or Password');
-            window.location.href = '/course-management/ui/login.php';
-        </script>";
-        exit();
     }
 }
+
 ?>

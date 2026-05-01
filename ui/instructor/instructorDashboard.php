@@ -22,7 +22,7 @@ AuthHelper::requireRole('instructor');
 <body>
     <div class="dashboard-header">
         <h1>Welcome back, <?= htmlspecialchars($_SESSION['name'] ?? 'Instructor') ?> 👋</h1>
-        <p>Here’s what’s happening in your system</p>
+        <p>Here's what's happening in your system</p>
     </div>
 
     <div class="dashboard-cards">

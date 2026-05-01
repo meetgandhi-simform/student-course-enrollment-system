@@ -55,6 +55,8 @@ class AuthHelper
      */
     public static function redirectUser($role)
     {
+        $role = strtolower(trim($role));
+
         switch ($role) {
             case 'admin':
                 header("Location: /course-management/ui/admin/adminDashboard.php");
@@ -65,6 +67,8 @@ class AuthHelper
             case 'instructor':
                 header("Location: /course-management/ui/instructor/instructorDashboard.php");
                 break;
+            default:
+                echo "<script>alert('No Matcing Role Found!!');</script>";
         }
         exit();
     }

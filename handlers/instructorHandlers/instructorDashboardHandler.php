@@ -6,7 +6,7 @@ require __DIR__ . "./../../class/User.php";
 require __DIR__ . "./../../class/Course.php";
 
 AuthHelper::requireLogin();
-AuthHelper::requireRole('admin');
+AuthHelper::requireRole('instructor');
 
 $userObj = new User();
 $courseObj = new Course();
