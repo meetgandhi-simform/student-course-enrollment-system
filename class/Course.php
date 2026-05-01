@@ -61,23 +61,51 @@ class Course
     /**
      * Assign an instructor to a course
      *
+     * Checks if the instructor is already assigned to the course.
+     * If not, inserts a new record into course_instructor.
+     *
      * @param int $instructor_id Instructor ID
      * @param int $course_id Course ID
-     * 
-     * @return int|array Returns inserted ID or error array
+     *
+     * @return array Returns:
+     * [
+     *   "status" => bool,
+     *   "message" => string
+     * ]
      */
 
     public function assignInstructor($instructor_id, $course_id)
     {
         try {
-            $sql = "INSERT INTO course_instructor (instructor_id,course_id) values (?,?)";
+            $sql = "SELECT 1 FROM course_instructor 
+                WHERE instructor_id = ? AND course_id = ?";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bind_param("ii", $instructor_id, $course_id);
+            $stmt->execute();
+            $result = $stmt->get_result();
+
+            if ($result->num_rows > 0) {
+                return [
+                    "status" => false,
+                    "message" => "Instructor already assigned to this course!"
+                ];
+            }
+
+            $sql = "INSERT INTO course_instructor (instructor_id, course_id)
+                VALUES (?, ?)";
             $stmt = $this->conn->prepare($sql);
             $stmt->bind_param("ii", $instructor_id, $course_id);
             $stmt->execute();
 
-            return $this->conn->insert_id;
+            return [
+                "status" => true,
+                "message" => "Instructor assigned successfully!"
+            ];
         } catch (Exception $e) {
-            return ["status" => false, "message" => $e->getMessage()];
+            return [
+                "status" => false,
+                "message" => $e->getMessage()
+            ];
         }
     }
 
@@ -312,41 +340,25 @@ class Course
     public function deleteCourseInstructor($course_id, $instructor_id)
     {
         try {
-            $sql = "DELETE FROM course_instructor 
+            $this->conn->begin_transaction();
+
+            $sql1 = "DELETE FROM course_instructor 
                 WHERE course_id = ? AND instructor_id = ?";
 
-            $stmt = $this->conn->prepare($sql);
+            $stmt = $this->conn->prepare($sql1);
             $stmt->bind_param("ii", $course_id, $instructor_id);
             $stmt->execute();
 
-            return ["status" => true, "message" => "Instructor removed from course"];
-        } catch (Exception $e) {
-            return ["status" => false, "message" => $e->getMessage()];
-        }
-    }
-
-    /**
-     * Update available seats for a course
-     *
-     * Decreases available seats by 1 only if seats are available.
-     *
-     * @param int $course_id Course ID
-     * 
-     * @return array Status and message
-     */
-    public function updateSeats($course_id)
-    {
-        try {
-            $sql = "UPDATE courses 
-                SET avail_seats = avail_seats - 1 
-                WHERE id = ? AND avail_seats > 0";
-
-            $stmt = $this->conn->prepare($sql);
+            $sql2 = "UPDATE courses SET avail_seats = max_seats WHERE id = ?";
+            $stmt = $this->conn->prepare($sql2);
             $stmt->bind_param("i", $course_id);
             $stmt->execute();
 
-            return ["status" => true, "message" => "Seats updated successfully!"];
+            $this->conn->commit();
+
+            return ["status" => true, "message" => "Instructor removed from course"];
         } catch (Exception $e) {
+            $this->conn->rollback();
             return ["status" => false, "message" => $e->getMessage()];
         }
     }
@@ -375,5 +387,92 @@ class Course
         }
 
         return ["status" => false];
+    }
+
+    /**
+     * Get all available courses for a student
+     *
+     * @param int $id Student ID
+     * @param int $page Page number
+     * @param int $limit Records per page
+     *
+     * @return array Status with course data or error
+     */
+    public function getAllCourses($id, $page, $limit)
+    {
+        try {
+            $offset = ($page - 1) * $limit;
+            $sql = "SELECT 
+                        c.id,
+                        c.course_name,
+                        c.duration_weeks,
+                        c.avail_seats,
+                        ci.id AS course_instructor_id,
+                        u.name AS instructor_name
+                    FROM course_instructor ci
+                    JOIN courses c ON c.id = ci.course_id
+                    JOIN users u ON u.id = ci.instructor_id
+                    WHERE NOT EXISTS (
+                        SELECT 1
+                        FROM enrollments e
+                        WHERE e.course_instructor_id = ci.id
+                        AND e.student_id = ?
+                    )
+                    LIMIT ? OFFSET ?";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bind_param("iii", $id, $limit, $offset);
+            $stmt->execute();
+            $result = $stmt->get_result();
+
+            $data = [];
+
+            while ($row = $result->fetch_assoc()) {
+                $data[] = $row;
+            }
+
+            return ["status" => true, "data" => $data];
+        } catch (Exception $e) {
+            return ["status" => false, "message" => $e->getMessage()];
+        }
+    }
+
+    /**
+     * Count all available courses for a student
+     *
+     * @param int $id Student ID
+     *
+     * @return array Status with total count or error
+     */
+    public function countAllCourses($id)
+    {
+        try {
+            $sql = "SELECT COUNT(*) as total
+                FROM course_instructor ci
+                JOIN courses c ON c.id = ci.course_id
+                JOIN users u ON u.id = ci.instructor_id
+                WHERE NOT EXISTS (
+                    SELECT 1
+                    FROM enrollments e
+                    WHERE e.course_instructor_id = ci.id
+                    AND e.student_id = ?
+                )";
+
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bind_param("i", $id);
+            $stmt->execute();
+
+            $result = $stmt->get_result();
+            $row = $result->fetch_assoc();
+
+            return [
+                "status" => true,
+                "total" => (int)$row['total']
+            ];
+        } catch (Exception $e) {
+            return [
+                "status" => false,
+                "message" => $e->getMessage()
+            ];
+        }
     }
 }

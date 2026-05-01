@@ -42,21 +42,50 @@ class Enrollments
     /**
      * Enroll a student into a course
      *
+     * Creates an enrollment and decreases available seats.
+     * Uses a transaction to ensure both operations succeed together.
+     *
      * @param int $student_id Student ID
      * @param int $course_instructor_id Course-Instructor mapping ID
-     * 
-     * @return array Status and inserted enrollment ID OR error message
+     * @param int $course_id Course ID (for seat update)
+     *
+     * @return array Returns:
+     * [
+     *   "status" => bool,
+     *   "id" => int // inserted enrollment ID (on success)
+     * ]
+     * OR
+     * [
+     *   "status" => false,
+     *   "message" => string
+     * ]
      */
-    public function enrollStudent($student_id, $course_instructor_id)
+    public function enrollStudent($student_id, $course_instructor_id, $course_id)
     {
         try {
-            $sql = "INSERT INTO enrollments(student_id,course_instructor_id) VALUES (? , ?)";
-            $stmt = $this->conn->prepare($sql);
+            $this->conn->begin_transaction();
+
+            $sql1 = "UPDATE courses 
+                SET avail_seats = avail_seats - 1 
+                WHERE id = ? AND avail_seats > 0";
+
+            $stmt = $this->conn->prepare($sql1);
+            $stmt->bind_param("i", $course_id);
+            $stmt->execute();
+
+            if ($stmt->affected_rows === 0) {
+                throw new Exception("No seats available!");
+            }
+
+            $sql2 = "INSERT INTO enrollments(student_id,course_instructor_id) VALUES (? , ?)";
+            $stmt = $this->conn->prepare($sql2);
             $stmt->bind_param("ii", $student_id, $course_instructor_id);
             $stmt->execute();
 
+            $this->conn->commit();
             return ["status" => true, "id" => $this->conn->insert_id];
         } catch (Exception $e) {
+            $this->conn->rollback();
             return ["status" => false, "message" => $e->getMessage()];
         }
     }
@@ -167,12 +196,81 @@ class Enrollments
     public function activeEnrollment($id)
     {
         try {
-            $sql = "update enrollments set status = 'Enrolled' where id = ?";
+            $sql = "UPDATE enrollments SET status = 'Enrolled' WHERE id = ?";
             $stmt = $this->conn->prepare($sql);
             $stmt->bind_param("i", $id);
             $stmt->execute();
 
-            return ["status" => true, "message" => "Enrolled Successfully!!"];
+            return ["status" => true, "message" => "Reenrolled Successfully!!"];
+        } catch (Exception $e) {
+            return ["status" => false, "message" => $e->getMessage()];
+        }
+    }
+
+    public function completeEnrollment($id)
+    {
+        try {
+            $sql = "UPDATE enrollments SET status = 'Completed' WHERE id = ?";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bind_param("i", $id);
+            $stmt->execute();
+
+            return ["status" => true, "message" => "Course Completed Successfully!!"];
+        } catch (Exception $e) {
+            return ["status" => false, "message" => $e->getMessage()];
+        }
+    }
+
+    public function getEnrollmentsById($id, $page, $limit)
+    {
+        try {
+            $offset = ($page - 1) * $limit;
+            $sql = "SELECT
+	                    c.id as id, 
+                        c.course_name as name,
+                        c.duration_weeks as weeks,
+                        ci.instructor_id as instructor_id,
+                        u.name as instructor_name,
+                        e.status as status,
+                        e.id as enrollment_id
+                    FROM courses c 
+                    JOIN course_instructor ci ON c.id = ci.course_id
+                    JOIN enrollments e ON ci.id = e.course_instructor_id
+                    JOIN users u ON u.id = ci.instructor_id
+                    WHERE e.student_id = ?
+                    LIMIT ? OFFSET ?";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bind_param("iii", $id, $limit, $offset);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $data = [];
+
+            while ($row = $result->fetch_assoc()) {
+                $data[] = $row;
+            }
+
+            return ["status" => true, "data" => $data];
+        } catch (Exception $e) {
+            return ["status" => false, "message" => $e->getMessage()];
+        }
+    }
+
+    public function countEnrollmentsByStudentId($id)
+    {
+        try {
+            $sql = "SELECT COUNT(*) as total
+                    FROM courses c 
+                    JOIN course_instructor ci ON c.id = ci.course_id
+                    JOIN enrollments e ON ci.id = e.course_instructor_id
+                    JOIN users u ON u.id = ci.instructor_id
+                    WHERE e.student_id = ?";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bind_param("i", $id);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $row = $result->fetch_assoc();
+
+            return ["status" => true, "total" => (int)$row['total']];
         } catch (Exception $e) {
             return ["status" => false, "message" => $e->getMessage()];
         }

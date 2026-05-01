@@ -12,7 +12,7 @@ require __DIR__ . "./../../handlers/instructorHandlers/instructorDashboardHandle
 </head>
 
 <body>
-    <?php require_once 'instructorNavbar.php' ?>
+    <?php require_once 'navbar.php' ?>
     <?php if (isset($_SESSION['error'])): ?>
         <p class="error"><?= htmlspecialchars($_SESSION['error']) ?></p>
         <?php unset($_SESSION['error']); ?>

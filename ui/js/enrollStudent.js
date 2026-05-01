@@ -3,7 +3,9 @@ function findInstructors() {
 
   if (!courseId) return;
 
-  fetch(`/course-management/handlers/adminHandlers/getInstructor.php?course_id=${courseId}`)
+  fetch(
+    `/course-management/handlers/adminHandlers/getInstructor.php?course_id=${courseId}`,
+  )
     .then((res) => res.json())
     .then((response) => {
       const dropdown = document.getElementById("instructor_dropdown");

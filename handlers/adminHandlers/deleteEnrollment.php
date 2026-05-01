@@ -4,10 +4,8 @@ session_start();
 require_once __DIR__ . "/../../class/Enrollments.php";
 require_once __DIR__ . "/../../helper/AuthHelper.php";
 
-// Auth check
-AuthHelper::requireRole('admin');
+AuthHelper::requireRole(['admin', 'student']);
 
-// Validate input
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     header("Location: /course-management/ui/admin/adminDashboard.php");
     exit();

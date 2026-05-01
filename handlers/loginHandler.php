@@ -21,7 +21,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if (!isset($_POST['captcha']) || !isset($_SESSION['captcha'])) {
         $errors[] = "Captcha missing!";
-
     } else {
         if ($_POST['captcha'] !== $_SESSION['captcha']) {
             $errors[] = "Invalid captcha!";
@@ -56,5 +55,3 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 }
-
-?>

@@ -40,7 +40,7 @@ class EmailQueue
             $stmt = $this->conn->prepare($sql);
             $stmt->execute();
             $result = $stmt->get_result()->fetch_assoc();
-            
+
             return ["status" => true, "data" => $result];
         } catch (Exception $e) {
             return ["status" => false, "message" => $e->getMessage()];

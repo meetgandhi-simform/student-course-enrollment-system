@@ -228,7 +228,7 @@ class Validator
             if (empty($role)) {
                 throw new Exception("Role is required");
             }
-            
+
             $allowedRoles = ['Admin', 'Instructor'];
 
             if (!in_array($role, $allowedRoles)) {

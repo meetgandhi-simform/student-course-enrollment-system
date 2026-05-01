@@ -1,20 +1,42 @@
 <?php
+
 require __DIR__ . "./../../handlers/studentHandlers/studentDashboardHandler.php";
+require_once __DIR__ . "./../../helper/AuthHelper.php";
+
+AuthHelper::requireLogin();
+AuthHelper::requireRole('student');
 ?>
+
+<?php include_once 'navbar.php'; ?>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./../css/index.css">
     <title>Student Dashboard</title>
 </head>
 
 <body>
-    <h2>Student Dashboard</h2>
-    <p>Welcome <?php echo $_SESSION['name']; ?> Your <?php echo $_SESSION['role']; ?> Id is <?php echo $_SESSION['user_id']; ?></p>
+    <div class="dashboard-header">
+        <h1>Welcome back, <?= htmlspecialchars($_SESSION['name'] ?? 'Student') ?> 👋</h1>
+        <p>Here's what's happening</p>
+    </div>
 
-    <a href="/course-management/auth/Logout.php">Logout</a>
+    <div class="dashboard-cards">
+
+        <div class="card">
+            <h3>Enrolled Courses</h3>
+            <p><?= $totalEnrollments ?></p>
+        </div>
+
+        <div class="card">
+            <h3>Available Courses</h3>
+            <p><?= $totalCourses ?></p>
+        </div>
+
+    </div>
 </body>
 
 </html>

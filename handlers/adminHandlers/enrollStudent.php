@@ -50,7 +50,7 @@ if ($course['data']['avail_seats'] <= 0) {
 }
 
 
-$result = $enrollObj->enrollStudent($student_id, $course_instructor_id);
+$result = $enrollObj->enrollStudent($student_id, $course_instructor_id, $course_id);
 
 if (!$result['status']) {
     $_SESSION['error'] = $result['message'];
@@ -58,16 +58,6 @@ if (!$result['status']) {
     exit();
 }
 
-$courseResult = $courseObj->updateSeats($course_id);
-
-if (!$courseResult['status']) {
-    $_SESSION['error'] = $courseResult['message'];
-    header("Location: /course-management/ui/admin/enrollStudent.php");
-    exit();
-}
-
-
 $_SESSION['success'] = "Student enrolled successfully!";
 header("Location: /course-management/ui/admin/allEnrollments.php?tab=enrollments");
 exit();
-?>

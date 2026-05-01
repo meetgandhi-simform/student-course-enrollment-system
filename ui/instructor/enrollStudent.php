@@ -1,5 +1,4 @@
 <?php
-
 session_start();
 
 require_once __DIR__ . './../../helper/AuthHelper.php';
@@ -13,10 +12,8 @@ $userObj = new User();
 $courseObj = new Course();
 $enrollObj = new Enrollments();
 
-
 $students = $userObj->getStudents();
 $courses = $courseObj->getOptionCourseByInstructor($_SESSION['user_id']);
-
 ?>
 
 <!DOCTYPE html>
@@ -30,7 +27,7 @@ $courses = $courseObj->getOptionCourseByInstructor($_SESSION['user_id']);
 </head>
 
 <body>
-    <?php require_once 'instructorNavbar.php' ?>
+    <?php require_once 'navbar.php' ?>
 
     <div class="form-container">
         <h2>Enroll Student</h2>

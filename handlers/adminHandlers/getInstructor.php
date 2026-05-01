@@ -25,4 +25,3 @@ if ($result['status']) {
         "data" => []
     ]);
 }
-?>

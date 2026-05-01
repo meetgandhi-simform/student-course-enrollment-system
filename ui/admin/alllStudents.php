@@ -70,7 +70,7 @@ require __DIR__ . "./../../handlers/adminHandlers/adminDashboardHandler.php";
         <!-- Pagination -->
         <div class="pagination">
             <?php if ($student_page > 1): ?>
-                <a href="?tab=students&student_page=<?= $student_page - 1 ?>">⬅</a>
+                <a href="?tab=students&student_page=<?= $student_page - 1 ?>">&#11013;</a>
             <?php endif; ?>
 
             <?php for ($i = 1; $i <= $totalStudentPages; $i++): ?>
@@ -81,7 +81,7 @@ require __DIR__ . "./../../handlers/adminHandlers/adminDashboardHandler.php";
             <?php endfor; ?>
 
             <?php if ($student_page < $totalStudentPages): ?>
-                <a href="?tab=students&student_page=<?= $student_page + 1 ?>">➡</a>
+                <a href="?tab=students&student_page=<?= $student_page + 1 ?>">&#10145;</a>
             <?php endif; ?>
         </div>
     </div>

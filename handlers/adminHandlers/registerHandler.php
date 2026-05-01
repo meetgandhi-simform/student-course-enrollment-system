@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             alert('Error: " . htmlspecialchars($e->getMessage()) . "');
             window.location.href = '/course-management/ui/admin/adminDashboard.php';
         </script>";
-    exit();
+        exit();
     }
     if ($result['status'] == true) {
         $emailAddress = $email['data'];
@@ -85,16 +85,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <p>Best Regards,<br>
             <b>Student Enrollment Team</b></p>
         </div>";
-            $queue = $emailQueueObj->addEmail($email['data'], $subject, $message);
+        $queue = $emailQueueObj->addEmail($email['data'], $subject, $message);
 
-            if (!$queue['status']) {
-                error_log("Email Queue Failed: " . $queue['message']);
-            }
-            echo "<script>
+        if (!$queue['status']) {
+            error_log("Email Queue Failed: " . $queue['message']);
+        }
+        echo "<script>
                     alert('User created successfully');
                     window.location.href = '/course-management/ui/admin/adminDashboard.php';
                 </script>";
-    exit();
+        exit();
     } else {
         echo "<script>
         alert(" . json_encode($result['message']) . ");

@@ -71,7 +71,7 @@ require __DIR__ . "./../../handlers/adminHandlers/adminDashboardHandler.php";
 
             <!-- Previous -->
             <?php if ($instructor_page > 1): ?>
-                <a href="?tab=instructors&instructor_page=<?= $instructor_page - 1 ?>">⬅</a>
+                <a href="?tab=instructors&instructor_page=<?= $instructor_page - 1 ?>">&#11013;</a>
             <?php endif; ?>
 
             <!-- Numbers -->
@@ -84,7 +84,7 @@ require __DIR__ . "./../../handlers/adminHandlers/adminDashboardHandler.php";
 
             <!-- Next -->
             <?php if ($instructor_page < $totalInstructorPages): ?>
-                <a href="?tab=instructors&instructor_page=<?= $instructor_page + 1 ?>">➡</a>
+                <a href="?tab=instructors&instructor_page=<?= $instructor_page + 1 ?>">&#10145;</a>
             <?php endif; ?>
 
         </div>
