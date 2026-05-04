@@ -9,9 +9,8 @@
 
 <body>
     <div class="layout">
-
         <aside class="sidebar">
-
+            <button id="closeSidebar">&Cross;</button>
             <div class="logo">
                 <a href="adminDashboard.php">Admin Panel</a>
             </div>
@@ -38,7 +37,8 @@
         </aside>
 
         <main class="main-content">
+            <button id="menuToggle">☰</button>
 </body>
-<script src="./../ui/js/navbar.js"></script>
+<script src="./../js/navbar.js"></script>
 
 </html>

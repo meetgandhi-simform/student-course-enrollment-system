@@ -199,8 +199,9 @@ body {
 /* ============================= */
 
 .table-container {
-  width: 90%;
+  width: 100%;
   margin: 40px auto;
+  overflow-x: auto;
 }
 
 .table-container h2 {
@@ -211,6 +212,7 @@ body {
 /* Table */
 .custom-table {
   width: 100%;
+  min-width: 600px;
   border-collapse: collapse;
   background: #fff;
   border-radius: 8px;
@@ -285,7 +287,7 @@ body {
 /* ============================= */
 
 .pagination {
-  margin-top: 20px;
+  margin: 20px;
   text-align: center;
 }
 
@@ -610,4 +612,135 @@ body {
 
 .dropdown-menu li a {
   color: black;
+}
+
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 200px;
+  }
+
+  .main-content {
+    margin-left: 200px;
+    padding: 20px;
+  }
+
+  .form-container {
+    max-width: 90%;
+    padding: 25px;
+  }
+
+  .dashboard-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  /* Sidebar hidden */
+  .sidebar {
+    position: fixed;
+    left: -100%;
+    top: 0;
+    width: 220px;
+    height: 100%;
+    z-index: 1000;
+    transition: 0.3s;
+  }
+
+  .sidebar.active {
+    left: 0;
+  }
+
+  /* Main full width */
+  .main-content {
+    margin-left: 0;
+    padding: 15px;
+  }
+
+  /* Form full width */
+  .form-container {
+    max-width: 100%;
+    padding: 20px;
+  }
+
+  /* Cards stack */
+  .dashboard-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .form-container {
+    padding: 15px;
+  }
+
+  .form-container input,
+  .form-container select {
+    padding: 10px;
+  }
+
+  .form-container button {
+    padding: 10px;
+  }
+}
+
+#menuToggle {
+  display: none;
+  font-size: 20px;
+  margin-bottom: 15px;
+  background: #1e293b;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* Show on mobile */
+@media (max-width: 768px) {
+  #menuToggle {
+    display: block;
+  }
+}
+
+#closeSidebar {
+  display: none; /* hidden on desktop */
+  font-size: 20px;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+/* Show only on mobile */
+@media (max-width: 768px) {
+  #closeSidebar {
+    display: block;
+  }
+}
+
+td .delete-btn,
+td .active-btn {
+  display: inline-block;
+  margin: 2px 0;
+  font-size: 12px;
+  padding: 6px 8px;
+}
+
+td:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+@media (max-width: 768px) {
+  .table-container {
+    padding: 10px;
+  }
+
+  .custom-table th,
+  .custom-table td {
+    font-size: 13px;
+    padding: 8px;
+  }
 }
