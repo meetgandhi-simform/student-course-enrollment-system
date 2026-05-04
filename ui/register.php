@@ -13,7 +13,7 @@
     <div class="auth-container">
         <h2>Student Registration</h2>
 
-        <form method="POST" action="/course-management/auth/Register.php">
+        <form id="registerForm" method="POST">
 
             <label for="name">Name</label>
             <input type="text" name="name" id="name" required>
@@ -36,6 +36,8 @@
         </form>
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="./js/register.js"></script>
 </body>
 
 </html>

@@ -54,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </script>";
         exit();
     }
-    if ($result['status'] == true) {
+    if ($result['status']) {
         $emailAddress = $email['data'];
         $passwordOfUser = $password['data'];
         $subject = "Your Account Has Been Created – Student Enrollment System";

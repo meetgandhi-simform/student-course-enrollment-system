@@ -4,8 +4,11 @@ session_start();
 require_once __DIR__ . "/../class/User.php";
 require_once __DIR__ . "/../helper/MailHelper.php";
 require_once __DIR__ . "./../helper/AuthHelper.php";
+require_once __DIR__ . "./../class/EmailQueue.php";
 
 AuthHelper::requireRole(['admin', 'instructor']);
+
+$emailQueueObj = new EmailQueue();
 
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     header("Location: /course-management/ui/admin/adminDashboard.php");
@@ -50,11 +53,16 @@ if ($result['status']) {
     </html>
     ";
 
-    $mail = MailHelper::sendEmail($email, $subject, $message);
+    $queue = $emailQueueObj->addEmail($email, $subject, $message);
 
-    if (!$mail['status']) {
-        $_SESSION['error'] = "User deleted, but email failed";
+    if (!$queue['status']) {
+        error_log("Email Queue Failed: " . $queue['message']);
     }
+    echo "<script>
+                alert('User Deleted successfully');
+                window.history.back();
+        </script>";
+    exit();
 } else {
     $_SESSION['error'] = $result['message'];
 }

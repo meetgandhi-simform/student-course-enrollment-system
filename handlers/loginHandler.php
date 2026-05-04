@@ -6,6 +6,8 @@ require_once __DIR__ . "/../validator/Validator.php";
 
 session_start();
 
+header('Content-Type: application/json');
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $loginObj = new Login();
@@ -30,12 +32,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     unset($_SESSION['captcha']);
 
     if (!empty($errors)) {
-        $allErrors = implode("\n", $errors);
-
-        echo "<script>
-            alert(" . json_encode($allErrors) . ");
-            window.location.href = '/course-management/ui/login.php';
-        </script>";
+        echo json_encode([
+            "status" => false,
+            "errors" => $errors
+        ]);
         exit();
     }
 
@@ -45,13 +45,35 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     );
 
     if ($user) {
+        if ($user['isActive'] !== 'Active') {
+            echo json_encode([
+                "status" => false,
+                "message" => "Your account is inactive"
+            ]);
+            exit();
+        }
+
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['name'] = $user['name'];
         $_SESSION['role'] = $user['role'];
         $_SESSION['isActive'] = $user['isActive'];
 
-        if ($user['isActive'] === 'Active') {
-            AuthHelper::redirectUser(strtolower($user['role']));
-        }
+        echo json_encode([
+            "status" => true,
+            "role" => strtolower($user['role'])
+        ]);
+        exit();
+    } else {
+        echo json_encode([
+            "status" => false,
+            "message" => "Invalid email or password"
+        ]);
+        exit();
     }
 }
+
+echo json_encode([
+    "status" => false,
+    "message" => "Invalid request"
+]);
+exit();

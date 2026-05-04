@@ -7,6 +7,8 @@ require_once __DIR__ . "./../class/EmailQueue.php";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
+    header('Content-Type: application/json');
+
     $user = new User();
     $emailQueueobj = new EmailQueue();
 
@@ -25,12 +27,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 
     if (!empty($errors)) {
-        $allErrors = implode("\\n", $errors);
-
-        echo "<script>
-                alert(" . json_encode(implode("\n", $errors)) . ");
-                window.location.href = '/course-management/ui/register.php';
-            </script>";
+        echo json_encode([
+            "status" => false,
+            "errors" => $errors
+        ]);
         exit();
     }
 
@@ -41,6 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $phone['data'],
         $role
     );
+
     if ($result['status']) {
 
         $subject = 'Registration Successful Email';
@@ -80,15 +81,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (!$queueResponse['status']) {
             error_log("Email Queue Failed: " . $queueResponse['message']);
         }
-        echo "<script>
-                alert('Registered Successfully!');
-                window.location.href = '/course-management/ui/login.php';
-            </script>";
+        echo json_encode([
+            "status" => true,
+            "message" => "Registered Successfully"
+        ]);
         exit;
     } else {
-        echo "<script>
-                    alert(" . json_encode($result['message']) . ");
-                    window.location.href = '/course-management/ui/register.php';
-            </script>";
+        echo json_encode([
+            "status" => false,
+            "message" => $result['message']
+        ]);
     }
 }
