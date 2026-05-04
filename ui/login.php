@@ -33,7 +33,7 @@
             <button type="submit">Login</button>
 
             <p class="auth-link">
-                Don't have an account? <a href="register.php">Register</a>
+                Don't have an account? <a href="/course-management/ui/register.php">Register</a>
             </p>
 
         </form>

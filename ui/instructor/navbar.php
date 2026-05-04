@@ -8,26 +8,31 @@
 </head>
 
 <body>
-    <nav class="navbar">
-        <div class="logo"><a href="instructorDashboard.php">Instructor Dashboard</a></div>
-        <ul class="nav-links">
-            <li><a href="instructorDashboard.php">Dashboard</a></li>
-            <li><a href="allEnrollments.php?tab=enrollments">All Enrollments</a></li>
-            <li><a href="course.php?tab=courses">All Courses</a></li>
-            <li><a href="enrollStudent.php">Enroll Student</a></li>
 
+    <div class="layout">
 
-            <li class="profile-dropdown">
-                <button onclick="toggleDropdown()">👤 Profile &dtrif;</button>
+        <aside class="sidebar">
 
-                <ul id="dropdownMenu" class="dropdown-menu">
-                    <li><a href="editProfile.php">Edit Profile</a></li>
-                    <li><a href="/course-management/auth/Logout.php">Logout</a></li>
-                </ul>
-            </li>
-        </ul>
-    </nav>
+            <div class="logo">
+                <a href="instructorDashboard.php">Instructor Panel</a>
+            </div>
+
+            <ul class="menu">
+
+                <li><a href="instructorDashboard.php">Dashboard</a></li>
+                <li><a href="allEnrollments.php?tab=enrollments">All Enrollments</a></li>
+                <li><a href="course.php?tab=courses">All Courses</a></li>
+                <li><a href="enrollStudent.php">Enroll Student</a></li>
+
+                <li class="menu-title">Account</li>
+                <li><a href="editProfile.php">Edit Profile</a></li>
+                <li><a href="/course-management/auth/Logout.php" class="logout">Logout</a></li>
+
+            </ul>
+
+        </aside>
+
+        <main class="main-content">
 </body>
-<script src="./../ui/js/navbar.js"></script>
 
 </html>
