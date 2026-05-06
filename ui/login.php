@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <title>User Login</title>
 
-    <link rel="stylesheet" href="/course-management/ui/css/index.css">
+    <link rel="stylesheet" href="./css/index.css">
 </head>
 
 <body>

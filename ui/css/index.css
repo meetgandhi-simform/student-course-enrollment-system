@@ -725,6 +725,8 @@ td .active-btn {
   margin: 2px 0;
   font-size: 12px;
   padding: 6px 8px;
+  text-align: center;
+  min-width: 20px;
 }
 
 td:last-child {
