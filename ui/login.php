@@ -40,8 +40,8 @@
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="./js/captcha.js"></script>
-    <script src="./js/login.js"></script>
+    <script src="/course-management/ui/js/captcha.js"></script>
+    <script src="/course-management/ui/js/login.js"></script>
 
 </body>
 
