@@ -33,7 +33,6 @@ require_once __DIR__ . "./../../handlers/adminHandlers/createCourseHandler.php";
             <button type="submit">Create Course</button>
         </form>
     </div>
-
 </body>
 
 </html>

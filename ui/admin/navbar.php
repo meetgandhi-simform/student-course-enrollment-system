@@ -30,7 +30,7 @@
                 <li><a href="assignInstructor.php">Assign Instructor</a></li>
                 <li class="menu-title">Account</li>
 
-                <li><a href="editProfile.php">Edit Profile</a></li>
+                <li><a href="editProfile.php">My Profile</a></li>
                 <li><a href="/course-management/auth/Logout.php" class="logout">Logout</a></li>
             </ul>
 

@@ -1,6 +1,9 @@
 <?php
-require __DIR__ . "./../../handlers/adminHandlers/adminDashboardHandler.php";
+session_start();
+require_once __DIR__ . "./../../helper/AuthHelper.php";
+AuthHelper::requireRole('admin');
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -8,6 +11,10 @@ require __DIR__ . "./../../handlers/adminHandlers/adminDashboardHandler.php";
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet"
+        href="https://cdn.datatables.net/2.3.1/css/dataTables.dataTables.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="https://cdn.datatables.net/2.3.1/js/dataTables.js"></script>
     <link rel="stylesheet" href="./../css/index.css">
     <title>All Instructors</title>
 </head>
@@ -15,14 +22,10 @@ require __DIR__ . "./../../handlers/adminHandlers/adminDashboardHandler.php";
 <?php require 'navbar.php'; ?>
 
 <body>
-    <?php if (isset($_SESSION['error'])): ?>
-        <p class="error"><?= htmlspecialchars($_SESSION['error']) ?></p>
-        <?php unset($_SESSION['error']); ?>
-    <?php endif; ?>
-    <div class="table-container">
-        <h2>All Instructors</h2>
+    <h2>All Instructors</h2>
 
-        <table class="custom-table">
+    <table id="instructorTable" class="custom-table">
+        <thead>
             <tr>
                 <th>Id</th>
                 <th>Name</th>
@@ -32,63 +35,11 @@ require __DIR__ . "./../../handlers/adminHandlers/adminDashboardHandler.php";
                 <th>Status</th>
                 <th>Action</th>
             </tr>
-
-            <?php foreach ($instructors as $instructor): ?>
-                <tr>
-                    <td><?= $instructor['id']; ?></td>
-                    <td><?= $instructor['name']; ?></td>
-                    <td><?= $instructor['email']; ?></td>
-                    <td><?= $instructor['phone']; ?></td>
-                    <td><?= $instructor['role']; ?></td>
-                    <td>
-                        <span class="status <?= strtolower($instructor['isActive']) ?>">
-                            <?= $instructor['isActive']; ?>
-                        </span>
-                    </td>
-                    <td>
-                        <?php if ($instructor['isActive'] === 'Active'): ?>
-                            <a class="delete-btn"
-                                href="/course-management/auth/Delete.php?id=<?= $instructor['id']; ?>"
-                                onclick="return confirm('Are you sure you want to delete this user?')">
-                                Delete
-                            </a>
-                        <?php endif; ?>
-
-                        <?php if ($instructor['isActive'] === 'Inactive'): ?>
-                            <a class="active-btn"
-                                href="/course-management/handlers/adminInstructorHandlers/activeUserHandler.php?id=<?= $instructor['id']; ?>"
-                                onclick="return confirm('Are You sure You want to activate this user? ')">Activate User
-                            </a>
-                        <?php endif; ?>
-
-                    </td>
-                </tr>
-            <?php endforeach; ?>
-        </table>
-
-        <!-- Pagination -->
-        <div class="pagination">
-
-            <!-- Previous -->
-            <?php if ($instructor_page > 1): ?>
-                <a href="?tab=instructors&instructor_page=<?= $instructor_page - 1 ?>">&#11013;</a>
-            <?php endif; ?>
-
-            <!-- Numbers -->
-            <?php for ($i = 1; $i <= $totalInstructorPages; $i++): ?>
-                <a href="?tab=instructors&instructor_page=<?= $i ?>"
-                    class="<?= ($i == $instructor_page) ? 'active' : '' ?>">
-                    <?= $i ?>
-                </a>
-            <?php endfor; ?>
-
-            <!-- Next -->
-            <?php if ($instructor_page < $totalInstructorPages): ?>
-                <a href="?tab=instructors&instructor_page=<?= $instructor_page + 1 ?>">&#10145;</a>
-            <?php endif; ?>
-
-        </div>
+        </thead>
+        <tbody></tbody>
+    </table>
     </div>
+    <script src="./../js/admin/getAllInstructors.js"></script>
 </body>
 
 </html>

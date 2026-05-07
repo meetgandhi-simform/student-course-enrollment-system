@@ -1,25 +1,43 @@
 <?php
+
 session_start();
+
+header("Content-Type: application/json");
+
 require_once __DIR__ . "/../../class/Enrollments.php";
-require_once __DIR__ . "./../../helper/AuthHelper.php";
+require_once __DIR__ . "/../../helper/AuthHelper.php";
 
 AuthHelper::requireLogin();
+
 AuthHelper::requireRole(['admin', 'student']);
 
-if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
-    header("Location: /course-management/ui/admin/adminDashboard.php");
+if (!isset($_POST['id']) || !is_numeric($_POST['id'])) {
+
+    echo json_encode([
+        'status' => false,
+        'message' => 'Invalid Enrollment ID'
+    ]);
+
     exit();
 }
 
-$id = (int)$_GET['id'];
+$id = (int) $_POST['id'];
 
 $obj = new Enrollments();
+
 $result = $obj->completeEnrollment($id);
 
 if ($result['status']) {
-    echo "<script>window.history.back();</script>";
-} else {
-    $_SESSION['error'] = $result['message'];
-    echo "<script>window.history.back();</script>";
+
+    echo json_encode([
+        'status' => true,
+        'message' => 'Enrollment completed successfully'
+    ]);
+
+    exit();
 }
-exit();
+
+echo json_encode([
+    'status' => false,
+    'message' => $result['message']
+]);

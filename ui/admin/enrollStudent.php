@@ -88,7 +88,7 @@ $courses = $courseObj->getOptionCourses();
 
         </form>
 
-        <script src="./../js/enrollStudent.js"></script>
+        <script src="./../js/admin/enrollStudent.js"></script>
 </body>
 
 </html>

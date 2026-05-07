@@ -1,6 +1,9 @@
 <?php
-require __DIR__ . "./../../handlers/adminHandlers/adminDashboardHandler.php";
+session_start();
+require_once __DIR__ . "./../../helper/AuthHelper.php";
+AuthHelper::requireRole('admin');
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -8,83 +11,36 @@ require __DIR__ . "./../../handlers/adminHandlers/adminDashboardHandler.php";
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet"
+        href="https://cdn.datatables.net/2.3.1/css/dataTables.dataTables.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="https://cdn.datatables.net/2.3.1/js/dataTables.js"></script>
     <link rel="stylesheet" href="./../css/index.css">
     <title>All students</title>
 </head>
 
+<?php require 'navbar.php'; ?>
+
 <body>
-    <?php require 'navbar.php'; ?>
-
-    <?php if (isset($_SESSION['error'])): ?>
-        <p class="error"><?= htmlspecialchars($_SESSION['error']) ?></p>
-        <?php unset($_SESSION['error']); ?>
-    <?php endif; ?>
-
     <div class="table-container">
         <h2>All Students</h2>
 
-        <table class="custom-table">
-            <tr>
-                <th>Id</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Phone</th>
-                <th>Role</th>
-                <th>Status</th>
-                <th>Action</th>
-            </tr>
-
-            <?php foreach ($students as $student): ?>
+        <table id="studentTable" class="custom-table">
+            <thead>
                 <tr>
-                    <td><?= $student['id']; ?></td>
-                    <td><?= $student['name']; ?></td>
-                    <td><?= $student['email']; ?></td>
-                    <td><?= $student['phone']; ?></td>
-                    <td><?= $student['role']; ?></td>
-                    <td>
-                        <span class="status <?= strtolower($student['isActive']) ?>">
-                            <?= $student['isActive']; ?>
-                        </span>
-                    </td>
-                    <td>
-                        <?php if ($student['isActive'] === 'Active'):
-                        ?>
-                            <a class="delete-btn"
-                                href="/course-management/auth/Delete.php?id=<?= $student['id']; ?>"
-                                onclick="return confirm('Are you sure?')">
-                                Delete
-                            </a>
-                        <?php endif; ?>
-
-                        <?php if ($student['isActive'] === 'Inactive'): ?>
-                            <a class="active-btn"
-                                href="/course-management/handlers/adminInstructorHandlers/activeUserHandler.php?id=<?= $student['id']; ?>"
-                                onclick="return confirm('Are You sure You want to activate this user? ')">Activate User
-                            </a>
-                        <?php endif; ?>
-                    </td>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Action</th>
                 </tr>
-            <?php endforeach; ?>
+            </thead>
+            <tbody></tbody>
         </table>
-
-        <!-- Pagination -->
-        <div class="pagination">
-            <?php if ($student_page > 1): ?>
-                <a href="?tab=students&student_page=<?= $student_page - 1 ?>">&#11013;</a>
-            <?php endif; ?>
-
-            <?php for ($i = 1; $i <= $totalStudentPages; $i++): ?>
-                <a href="?tab=students&student_page=<?= $i ?>"
-                    class="<?= ($i == $student_page) ? 'active' : '' ?>">
-                    <?= $i ?>
-                </a>
-            <?php endfor; ?>
-
-            <?php if ($student_page < $totalStudentPages): ?>
-                <a href="?tab=students&student_page=<?= $student_page + 1 ?>">&#10145;</a>
-            <?php endif; ?>
-        </div>
     </div>
+    <script src="./../js/admin/getAllStudents.js"></script>
 </body>
 <br /><br />
 

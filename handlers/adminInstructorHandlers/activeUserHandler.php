@@ -1,5 +1,8 @@
 <?php
 session_start();
+
+header("Content-Type: application/json");
+
 require_once __DIR__ . "/../../class/User.php";
 require_once __DIR__ . "./../../helper/AuthHelper.php";
 
@@ -7,21 +10,32 @@ require_once __DIR__ . "./../../helper/AuthHelper.php";
 AuthHelper::requireRole(['admin', 'instructor']);
 
 // Validate ID
-if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
-    header("Location: /course-management/ui/admin/adminDashboard.php");
+if (!isset($_POST['id']) || !is_numeric($_POST['id'])) {
+    echo json_encode([
+        'status' => false,
+        'message' => 'Invalid User ID'
+    ]);
+
     exit();
 }
 
-$id = (int)$_GET['id'];
+$id = (int) $_POST['id'];
 
 $userObj = new User();
-if ($userObj->activateUser($id)['status'] !== false) {
-    $result = $userObj->activateUser($id);
-    if ($result) {
-        echo "<script>window.history.back();</script>";
-    } else {
-        $_SESSION['error'] = $userObj->activateUser($id)['Message'];
-        echo "<script>window.history.back();</script>";
-    }
+
+$result = $userObj->activateUser($id);
+
+if ($result['status']) {
+
+    echo json_encode([
+        'status' => true,
+        'message' => 'User activated successfully'
+    ]);
+
+    exit();
 }
-exit();
+
+echo json_encode([
+    'status' => false,
+    'message' => $result['message']
+]);

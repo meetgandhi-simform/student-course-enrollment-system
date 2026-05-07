@@ -60,7 +60,7 @@ require_once __DIR__ . "./../../handlers/adminHandlers/registerHandler.php";
             </form>
         </div>
     </div>
-    <script src="./../js/createUser.js"></script>
+    <script src="./../js/admin/createUser.js"></script>
 </body>
 
 </html>

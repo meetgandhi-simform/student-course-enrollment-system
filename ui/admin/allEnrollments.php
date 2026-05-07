@@ -1,6 +1,9 @@
 <?php
-require_once __DIR__ . "./../../handlers/adminHandlers/adminDashboardHandler.php";
+session_start();
+require_once __DIR__ . "./../../helper/AuthHelper.php";
+AuthHelper::requireRole('admin');
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -8,6 +11,10 @@ require_once __DIR__ . "./../../handlers/adminHandlers/adminDashboardHandler.php
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet"
+        href="https://cdn.datatables.net/2.3.1/css/dataTables.dataTables.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="https://cdn.datatables.net/2.3.1/js/dataTables.js"></script>
     <link rel="stylesheet" href="./../css/index.css">
     <title>All Enrollments</title>
 </head>
@@ -15,101 +22,26 @@ require_once __DIR__ . "./../../handlers/adminHandlers/adminDashboardHandler.php
 <?php require 'navbar.php'; ?>
 
 <body>
-
-    <?php if (isset($_SESSION['success'])): ?>
-        <p style="color:green;">
-            <?= $_SESSION['success'];
-            unset($_SESSION['success']); ?>
-        </p>
-    <?php endif; ?>
-
-    <?php if (isset($_SESSION['error'])): ?>
-        <p class="error"><?= htmlspecialchars($_SESSION['error']) ?></p>
-        <?php unset($_SESSION['error']); ?>
-    <?php endif; ?>
-
     <div class="table-container">
         <h2>All Enrollments</h2>
 
-        <table class="custom-table">
-            <tr>
-                <th>Id</th>
-                <th>Course Name</th>
-                <th>Student Id</th>
-                <th>Student Name</th>
-                <th>Instructor Id</th>
-                <th>Instructor Name</th>
-                <th>Status</th>
-                <th>Action</th>
-            </tr>
-            <?php foreach ($enrollments as $enrollment): ?>
+        <table id="enrollmentTable" class="custom-table">
+            <thead>
                 <tr>
-                    <td><?= $enrollment['enrollment_id']; ?></td>
-                    <td><?= $enrollment['course_name']; ?></td>
-                    <td><?= $enrollment['student_id']; ?></td>
-                    <td><?= $enrollment['student_name']; ?></td>
-                    <td><?= $enrollment['instructor_id']; ?></td>
-                    <td><?= $enrollment['instructor_name']; ?></td>
-                    <td>
-                        <span class="status <?= strtolower($enrollment['enrollment_status']) ?>">
-                            <?= $enrollment['enrollment_status']; ?>
-                        </span>
-                    </td>
-                    <td>
-                        <?php if ($enrollment['enrollment_status'] === 'Enrolled'): ?>
-                            <a class="delete-btn"
-                                href="/course-management/handlers/adminHandlers/deleteEnrollment.php?id=<?= $enrollment['enrollment_id']; ?>"
-                                onclick="return confirm('Are you sure you want to delete this Enrollment?')">
-                                Cancel Enrollment
-                            </a>
-                            <a class="active-btn"
-                                href="/course-management/handlers/adminHandlers/completeEnrollment.php?id=<?= $enrollment['enrollment_id']; ?>"
-                                onclick="return confirm('Are You sure You want to activate this Enrollment? ')">Complete
-                            </a>
-                        <?php endif; ?>
-
-                        <?php if ($enrollment['enrollment_status'] === 'Cancelled'): ?>
-                            <a class="active-btn"
-                                href="/course-management/handlers/adminHandlers/activeEnrollment.php?id=<?= $enrollment['enrollment_id']; ?>"
-                                onclick="return confirm('Are You sure You want to activate this Enrollment? ')">Re-Enroll
-                            </a>
-                        <?php endif; ?>
-
-                        <?php if ($enrollment['enrollment_status'] === 'Completed') : ?>
-                            <a class="active-btn"
-                                href="/course-management/handlers/adminHandlers/activeEnrollment.php?id=<?= $enrollment['enrollment_id']; ?>"
-                                onclick="return confirm('Are You sure You want to activate this Enrollment? ')">Re-Enroll
-                            </a>
-                        <?php endif; ?>
-                    </td>
+                    <th>Id</th>
+                    <th>Course Name</th>
+                    <th>Student Id</th>
+                    <th>Student Name</th>
+                    <th>Instructor Id</th>
+                    <th>Instructor Name</th>
+                    <th>Status</th>
+                    <th>Action</th>
                 </tr>
-            <?php endforeach; ?>
+            </thead>
+            <tbody></tbody>
         </table>
-
-        <!-- Pagination -->
-        <div class="pagination">
-
-            <!-- Previous Button -->
-            <?php if ($enrollment_page > 1): ?>
-                <a href="?tab=enrollments&enrollment_page=<?= $enrollment_page - 1 ?>">&#11013;</a>
-            <?php endif; ?>
-
-            <!-- Page Numbers -->
-            <?php for ($i = 1; $i <= $totalEnrollmentPages; $i++): ?>
-                <a href="?tab=enrollments&enrollment_page=<?= $i ?>"
-                    class="<?= ($i == $enrollment_page) ? 'active' : '' ?>">
-                    <?= $i ?>
-                </a>
-            <?php endfor; ?>
-
-            <!-- Next Button -->
-            <?php if ($enrollment_page < $totalEnrollmentPages): ?>
-                <a href="?tab=enrollments&enrollment_page=<?= $enrollment_page + 1 ?>">&#10145;</a>
-            <?php endif; ?>
-
-        </div>
-
     </div>
+    <script src="./../js/admin/getAllEnrollments.js"></script>
 </body>
 
 </html>

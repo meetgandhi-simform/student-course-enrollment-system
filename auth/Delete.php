@@ -1,6 +1,8 @@
 <?php
 session_start();
 
+header("Content-Type: application/json");
+
 require_once __DIR__ . "/../class/User.php";
 require_once __DIR__ . "/../helper/MailHelper.php";
 require_once __DIR__ . "./../helper/AuthHelper.php";
@@ -10,20 +12,27 @@ AuthHelper::requireRole(['admin', 'instructor']);
 
 $emailQueueObj = new EmailQueue();
 
-if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
-    header("Location: /course-management/ui/admin/adminDashboard.php");
+if (!isset($_POST['id']) || !is_numeric($_POST['id'])) {
+    echo json_encode([
+        'status' => false,
+        'message' => 'Invalid User ID'
+    ]);
+
     exit();
 }
 
-$id = (int) $_GET['id'];
+$id = (int) $_POST['id'];
 
 $userObj = new User();
 
-$student = $userObj->getUserById($id);
+$user = $userObj->getUserById($id);
 
-if (!$student) {
-    $_SESSION['error'] = "User not found";
-    header("Location: " . $_SERVER['HTTP_REFERER']);
+if (!$user) {
+    echo json_encode([
+        'status' => false,
+        'message' => 'User not found'
+    ]);
+
     exit();
 }
 
@@ -31,7 +40,7 @@ $result = $userObj->deleteUsers($id);
 
 if ($result['status']) {
 
-    $email = $student['email'];
+    $email = $user['email'];
     $subject = "Account Deactivation Notice - Student Enrollment System";
 
     $message = "
@@ -39,7 +48,7 @@ if ($result['status']) {
         <body style='font-family: Arial; line-height: 1.6;'>
             <h2 style='color: #d9534f;'>Account Deactivated</h2>
 
-            <p>Dear {$student['name']},</p>
+            <p>Dear {$user['name']},</p>
 
             <p>Your account has been <strong>deactivated</strong> by the administrator.</p>
 
@@ -58,14 +67,13 @@ if ($result['status']) {
     if (!$queue['status']) {
         error_log("Email Queue Failed: " . $queue['message']);
     }
-    echo "<script>
-                alert('User Deleted successfully');
-                window.history.back();
-        </script>";
+    echo json_encode([
+        'status' => true,
+        'message' => 'User deleted successfully'
+    ]);
     exit();
-} else {
-    $_SESSION['error'] = $result['message'];
 }
-
-header("Location: " . $_SERVER['HTTP_REFERER']);
-exit();
+echo json_encode([
+    'status' => false,
+    'message' => $result['message']
+]);
