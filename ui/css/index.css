@@ -720,7 +720,9 @@ body {
 }
 
 td .delete-btn,
-td .active-btn {
+td .active-btn,
+td .complete-btn,
+td .reenroll-btn {
   display: inline-block;
   margin: 2px 0;
   font-size: 12px;
@@ -745,4 +747,20 @@ td:last-child {
     font-size: 13px;
     padding: 8px;
   }
+}
+.complete-btn {
+  color: white;
+  background-color: #22c55e;
+  padding: 5px 10px;
+  margin-left: 8px;
+  border-radius: 5px;
+  text-decoration: none;
+}
+.reenroll-btn {
+  color: white;
+  background-color: #22c55e;
+  padding: 5px 10px;
+  margin-left: 8px;
+  border-radius: 5px;
+  text-decoration: none;
 }

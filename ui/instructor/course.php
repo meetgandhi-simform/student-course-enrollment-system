@@ -1,5 +1,7 @@
 <?php
-require __DIR__ . "./../../handlers/instructorHandlers/instructorDashboardHandler.php";
+require __DIR__ . "./../../helper/AuthHelper.php";
+session_start();
+AuthHelper::requireRole('instructor');
 ?>
 
 <!DOCTYPE html>
@@ -8,61 +10,38 @@ require __DIR__ . "./../../handlers/instructorHandlers/instructorDashboardHandle
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Course With Instructor</title>
+    <link rel="stylesheet"
+        href="https://cdn.datatables.net/2.3.1/css/dataTables.dataTables.css">
+
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+
+    <script src="https://cdn.datatables.net/2.3.1/js/dataTables.js"></script>
+
+    <link rel="stylesheet" href="./css/index.css">
+    <title>Courses</title>
 </head>
 
-<body>
-    <?php require_once 'navbar.php' ?>
-    <?php if (isset($_SESSION['error'])): ?>
-        <p class="error"><?= htmlspecialchars($_SESSION['error']) ?></p>
-        <?php unset($_SESSION['error']); ?>
-    <?php endif; ?>
+<?php require_once 'navbar.php' ?>
 
+<body>
     <div class="table-container">
         <h2>Courses</h2>
 
-        <table class="custom-table">
-            <tr>
-                <th>Id</th>
-                <th>Course Name</th>
-                <th>Seats Left</th>
-            </tr>
+        <table id="courseTable" class="custom-table">
 
-            <?php if (empty($courseWithInstructors)): ?>
+            <thead>
                 <tr>
-                    <td colspan="7" style="text-align:center;">No courses found</td>
+                    <th>Id</th>
+                    <th>Course Name</th>
+                    <th>Seats Left</th>
                 </tr>
-            <?php else: ?>
-                <?php foreach ($courseWithInstructors as $course): ?>
-                    <tr>
-                        <td><?= $course['id']; ?></td>
-                        <td><?= $course['course_name']; ?></td>
-                        <td><?= $course['avail_seats'] ?> / <?= $course['max_seats']; ?></td>
-                    </tr>
-                <?php endforeach; ?>
-            <?php endif; ?>
+            </thead>
+
+            <tbody></tbody>
+
         </table>
-
-        <!-- Pagination -->
-        <div class="pagination">
-
-            <?php if ($course_page > 1): ?>
-                <a href="?tab=courses&course_page=<?= $course_page - 1 ?>">⬅</a>
-            <?php endif; ?>
-
-            <?php for ($i = 1; $i <= $totalCourseWithInstructorPages; $i++): ?>
-                <a href="?tab=courses&course_page=<?= $i ?>"
-                    class="<?= ($i == $course_page) ? 'active' : '' ?>">
-                    <?= $i ?>
-                </a>
-            <?php endfor; ?>
-
-            <?php if ($course_page < $totalCourseWithInstructorPages): ?>
-                <a href="?tab=courses&course_page=<?= $course_page + 1 ?>">➡</a>
-            <?php endif; ?>
-
-        </div>
     </div>
+    <script src="./../js/instructor/getAllCourses.js"></script>
 </body>
 
 </html>

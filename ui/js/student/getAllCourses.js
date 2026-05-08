@@ -1,0 +1,100 @@
+$(document).ready(function () {
+  const courseTable = $("#courseTable").DataTable({
+    ajax: {
+      url: "/course-management/api/student/getCourses.php",
+
+      type: "GET",
+
+      dataSrc: function (response) {
+        if (response.status) {
+          return response.data;
+        }
+
+        alert(response.message);
+
+        return [];
+      },
+
+      error: function (xhr) {
+        console.error(xhr.responseText);
+
+        alert("Something went wrong.");
+      },
+    },
+
+    columns: [
+      { data: "id" },
+
+      { data: "course_name" },
+
+      { data: "duration_weeks" },
+
+      { data: "avail_seats" },
+
+      { data: "instructor_name" },
+
+      {
+        data: null,
+
+        render: function (data, type, row) {
+          return `
+                        <button class="active-btn"
+                                data-course="${row.id}"
+                                data-course-instructor="${row.course_instructor_id}">
+
+                            Enroll
+
+                        </button>
+                    `;
+        },
+      },
+    ],
+
+    paging: true,
+    searching: true,
+    ordering: true,
+    info: true,
+    pageLength: 5,
+    responsive: true,
+    processing: true,
+  });
+
+  $("#courseTable tbody").on("click", ".active-btn", function () {
+    let courseId = $(this).attr("data-course");
+
+    let courseInstructorId = $(this).attr("data-course-instructor");
+
+    if (!confirm("Enroll in this course?")) {
+      return;
+    }
+
+    $.ajax({
+      url: "/course-management/handlers/studentHandlers/enrollHandler.php",
+
+      type: "POST",
+
+      dataType: "json",
+
+      data: {
+        course_id: courseId,
+        course_instructor_id: courseInstructorId,
+      },
+
+      success: function (response) {
+        if (response.status) {
+          alert(response.message);
+
+          courseTable.ajax.reload(null, false);
+        } else {
+          alert(response.message);
+        }
+      },
+
+      error: function (xhr) {
+        console.error(xhr.responseText);
+
+        alert("Something went wrong.");
+      },
+    });
+  });
+});

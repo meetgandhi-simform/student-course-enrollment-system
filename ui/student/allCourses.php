@@ -1,5 +1,7 @@
 <?php
-require __DIR__ . "./../../handlers/studentHandlers/studentDashboardHandler.php";
+require __DIR__ . "./../../helper/AuthHelper.php";
+session_start();
+AuthHelper::requireRole('student');
 ?>
 
 <!DOCTYPE html>
@@ -8,65 +10,42 @@ require __DIR__ . "./../../handlers/studentHandlers/studentDashboardHandler.php"
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet"
+        href="https://cdn.datatables.net/2.3.1/css/dataTables.dataTables.css">
+
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+
+    <script src="https://cdn.datatables.net/2.3.1/js/dataTables.js"></script>
+
+    <link rel="stylesheet" href="./css/index.css">
     <link rel="stylesheet" href="./css/index.css">
     <title>All Courses</title>
 </head>
 
-<body>
-    <?php require_once 'navbar.php' ?>
+<?php require_once 'navbar.php' ?>
 
-    <?php if (isset($_SESSION['error'])): ?>
-        <p class="error"><?= htmlspecialchars($_SESSION['error']) ?></p>
-        <?php unset($_SESSION['error']); ?>
-    <?php endif; ?>
+<body>
 
     <div class="table-container">
         <h2>All Courses</h2>
+        <table id="courseTable" class="custom-table">
 
-        <table class="custom-table">
-            <tr>
-                <th>Course Id</th>
-                <th>Course Name</th>
-                <th>Weeks</th>
-                <th>Available Seats</th>
-                <th>Instructor Name</th>
-                <th>Action</th>
-            </tr>
-
-            <?php foreach ($courses as $course): ?>
+            <thead>
                 <tr>
-                    <td><?= $course['id']; ?></td>
-                    <td><?= $course['course_name']; ?></td>
-                    <td><?= $course['duration_weeks']; ?></td>
-                    <td><?= $course['avail_seats']; ?></td>
-                    <td><?= $course['instructor_name'] ?></td>
-                    <td>
-                        <a class="active-btn"
-                            href="/course-management/handlers/studentHandlers/enrollHandler.php?course_instructor_id=<?= $course['course_instructor_id'] ?>&course_id=<?= $course['id'] ?>">
-                            Enroll
-                        </a>
-                    </td>
+                    <th>Course Id</th>
+                    <th>Course Name</th>
+                    <th>Weeks</th>
+                    <th>Available Seats</th>
+                    <th>Instructor Name</th>
+                    <th>Action</th>
                 </tr>
-            <?php endforeach; ?>
+            </thead>
+
+            <tbody></tbody>
+
         </table>
-
-        <div class="pagination">
-            <?php if ($course_page > 1): ?>
-                <a href="?tab=courses&course_page=<?= $course_page - 1 ?>">⬅</a>
-            <?php endif; ?>
-
-            <?php for ($i = 1; $i <= $totalCoursePages; $i++): ?>
-                <a href="?tab=courses&course_page=<?= $i ?>"
-                    class="<?= ($i == $course_page) ? 'active' : '' ?>">
-                    <?= $i ?>
-                </a>
-            <?php endfor; ?>
-
-            <?php if ($course_page < $totalCoursePages): ?>
-                <a href="?tab=courses&course_page=<?= $course_page + 1 ?>">➡</a>
-            <?php endif; ?>
-        </div>
     </div>
+    <script src="./../js/student/getAllCourses.js"></script>
 </body>
 <br /><br />
 
