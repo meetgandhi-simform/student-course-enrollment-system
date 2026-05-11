@@ -21,15 +21,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (!$password['status']) $errors[] = $password['message'];
 
 
-    if (!isset($_POST['captcha']) || !isset($_SESSION['captcha'])) {
-        $errors[] = "Captcha missing!";
-    } else {
-        if ($_POST['captcha'] !== $_SESSION['captcha']) {
-            $errors[] = "Invalid captcha!";
-        }
-    }
+    // if (!isset($_POST['captcha']) || !isset($_SESSION['captcha'])) {
+    //     $errors[] = "Captcha missing!";
+    // } else {
+    //     if ($_POST['captcha'] !== $_SESSION['captcha']) {
+    //         $errors[] = "Invalid captcha!";
+    //     }
+    // }
 
-    unset($_SESSION['captcha']);
+    // unset($_SESSION['captcha']);
 
     if (!empty($errors)) {
         echo json_encode([

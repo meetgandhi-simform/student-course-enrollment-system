@@ -3,17 +3,7 @@ $(document).ready(function () {
     ajax: {
       url: "/course-management/api/student/getEnrollments.php",
 
-      type: "GET",
-
-      dataSrc: function (response) {
-        if (response.status) {
-          return response.data;
-        }
-
-        alert(response.message);
-
-        return [];
-      },
+      type: "POST",
 
       error: function (xhr) {
         console.error(xhr.responseText);
@@ -38,10 +28,10 @@ $(document).ready(function () {
 
         render: function (data) {
           return `
-                        <span class="status ${data.toLowerCase()}">
-                            ${data}
-                        </span>
-                    `;
+            <span class="status ${data.toLowerCase()}">
+                ${data}
+            </span>
+          `;
         },
       },
 
@@ -51,32 +41,25 @@ $(document).ready(function () {
         render: function (data, type, row) {
           if (row.status === "Enrolled") {
             return `
+              <button class="delete-btn"
+                      data-id="${row.enrollment_id}">
+                  Cancel
+              </button>
 
-                            <button class="delete-btn"
-                                    data-id="${row.enrollment_id}">
-
-                                Cancel
-
-                            </button>
-
-                            <button class="complete-btn"
-                                    data-id="${row.enrollment_id}">
-
-                                Complete
-
-                            </button>
-                        `;
+              <button class="complete-btn"
+                      data-id="${row.enrollment_id}">
+                  Complete
+              </button>
+            `;
           }
 
           if (row.status === "Cancelled") {
             return `
-                            <button class="active-btn"
-                                    data-id="${row.enrollment_id}">
-
-                                Re-Enroll
-
-                            </button>
-                        `;
+              <button class="active-btn"
+                      data-id="${row.enrollment_id}">
+                  Re-Enroll
+              </button>
+            `;
           }
 
           return "";
@@ -85,12 +68,20 @@ $(document).ready(function () {
     ],
 
     paging: true,
+
     searching: true,
+
     ordering: true,
+
     info: true,
+
     pageLength: 5,
+
     responsive: true,
+
     processing: true,
+
+    serverSide: true,
   });
 
   // CANCEL ENROLLMENT

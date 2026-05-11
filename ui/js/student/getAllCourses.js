@@ -3,17 +3,7 @@ $(document).ready(function () {
     ajax: {
       url: "/course-management/api/student/getCourses.php",
 
-      type: "GET",
-
-      dataSrc: function (response) {
-        if (response.status) {
-          return response.data;
-        }
-
-        alert(response.message);
-
-        return [];
-      },
+      type: "POST",
 
       error: function (xhr) {
         console.error(xhr.responseText);
@@ -57,6 +47,7 @@ $(document).ready(function () {
     pageLength: 5,
     responsive: true,
     processing: true,
+    serverSide: true,
   });
 
   $("#courseTable tbody").on("click", ".active-btn", function () {

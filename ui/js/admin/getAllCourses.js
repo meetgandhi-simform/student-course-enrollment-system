@@ -1,19 +1,13 @@
 $(document).ready(function () {
   const courseTable = $("#courseTable").DataTable({
+    processing: true,
+
+    serverSide: true,
+
     ajax: {
       url: "/course-management/api/admins/getCoursesWithInstructor.php",
 
-      type: "GET",
-
-      dataSrc: function (response) {
-        if (response.status) {
-          return response.data;
-        }
-
-        alert(response.message);
-
-        return [];
-      },
+      type: "POST",
 
       error: function (xhr) {
         console.error(xhr.responseText);
@@ -32,8 +26,8 @@ $(document).ready(function () {
 
         render: function (data, type, row) {
           return `
-                        ${row.avail_seats} / ${row.max_seats}
-                    `;
+            ${row.avail_seats} / ${row.max_seats}
+          `;
         },
       },
 
@@ -46,38 +40,40 @@ $(document).ready(function () {
 
         render: function (data) {
           return `
-                        <span class="status ${data.toLowerCase()}">
-                            ${data}
-                        </span>
-                    `;
+            <span class="status ${data.toLowerCase()}">
+              ${data}
+            </span>
+          `;
         },
       },
 
       {
         data: null,
 
+        orderable: false,
+
+        searchable: false,
+
         render: function (data, type, row) {
           return `
-                        <button class="delete-btn"
-                                data-course="${row.id}"
-                                data-instructor="${row.instructor_id}">
+            <button class="delete-btn"
+                    data-course="${row.id}"
+                    data-instructor="${row.instructor_id}">
 
-                            Remove Instructor
+                Remove Instructor
 
-                        </button>
-                    `;
+            </button>
+          `;
         },
       },
     ],
 
-    paging: true,
-    searching: true,
-    ordering: true,
-    info: true,
     pageLength: 5,
+
     responsive: true,
-    processing: true,
   });
+
+  // REMOVE INSTRUCTOR
 
   $("#courseTable tbody").on("click", ".delete-btn", function () {
     let courseId = $(this).attr("data-course");
@@ -97,6 +93,7 @@ $(document).ready(function () {
 
       data: {
         course_id: courseId,
+
         instructor_id: instructorId,
       },
 

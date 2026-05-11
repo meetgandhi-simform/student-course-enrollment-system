@@ -1,19 +1,13 @@
 $(document).ready(function () {
   const studentTable = $("#studentTable").DataTable({
+    processing: true,
+
+    serverSide: true,
+
     ajax: {
       url: "/course-management/api/admins/getStudents.php",
 
-      type: "GET",
-
-      dataSrc: function (response) {
-        if (response.status) {
-          return response.data;
-        }
-
-        alert(response.message);
-
-        return [];
-      },
+      type: "POST",
 
       error: function (xhr) {
         console.error(xhr.responseText);
@@ -38,43 +32,43 @@ $(document).ready(function () {
 
         render: function (data) {
           return `
-                    <span class="status ${data.toLowerCase()}">
-                        ${data}
-                    </span>
-                `;
+            <span class="status ${data.toLowerCase()}">
+              ${data}
+            </span>
+          `;
         },
       },
 
       {
         data: null,
 
+        orderable: false,
+
+        searchable: false,
+
         render: function (data, type, row) {
           if (row.isActive === "Active") {
             return `
-                    <button class="delete-btn"
-                            data-id="${row.id}">
-                        Delete
-                    </button>
-                    `;
+              <button class="delete-btn"
+                      data-id="${row.id}">
+                Delete
+              </button>
+            `;
           }
 
           return `
-                    <button class="active-btn"
-                            data-id="${row.id}">
-                        Activate User
-                    </button>
-                    `;
+            <button class="active-btn"
+                    data-id="${row.id}">
+              Activate User
+            </button>
+          `;
         },
       },
     ],
 
-    paging: true,
-    searching: true,
-    ordering: true,
-    info: true,
     pageLength: 5,
+
     responsive: true,
-    processing: true,
   });
 
   $("#studentTable tbody").on("click", ".delete-btn", function () {

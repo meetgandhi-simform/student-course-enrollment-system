@@ -1,81 +1,82 @@
 $(document).ready(function () {
   const adminTable = $("#adminTable").DataTable({
+    processing: true,
+
+    serverSide: true,
+
     ajax: {
       url: "/course-management/api/admins/getAdmins.php",
-      type: "GET",
 
-      dataSrc: function (response) {
-        if (response.status) {
-          return response.data;
-        }
-        console.error(response.message);
-        alert(response.message);
-        return [];
-      },
+      type: "POST",
 
       error: function (xhr) {
         console.error(xhr.responseText);
+
         alert("Something went wrong while fetching admins.");
       },
     },
+
     columns: [
       { data: "id" },
+
       { data: "name" },
+
       { data: "email" },
+
       { data: "phone" },
+
       { data: "role" },
+
       {
         data: "isActive",
+
         render: function (data) {
           return `
-                  <span class="status ${data.toLowerCase()}">
-                      ${data}
-                  </span>
-                `;
+            <span class="status ${data.toLowerCase()}">
+              ${data}
+            </span>
+          `;
         },
       },
 
       {
         data: null,
 
-        render: function (row) {
+        orderable: false,
+
+        searchable: false,
+
+        render: function (data, type, row) {
           if (row.isActive === "Active") {
             return `
-                    <button class="delete-btn"
-                            data-id="${row.id}">
-                        Delete
-                    </button>
-                `;
+              <button class="delete-btn"
+                      data-id="${row.id}">
+                Delete
+              </button>
+            `;
           }
 
           return `
-                  <button class="active-btn" data-id="${row.id}">
-                      Activate User
-                  </button>
-                `;
+            <button class="active-btn"
+                    data-id="${row.id}">
+              Activate User
+            </button>
+          `;
         },
       },
     ],
 
-    paging: true,
-    searching: true,
-    ordering: true,
-    info: true,
     pageLength: 5,
+
     responsive: true,
-    processing: true,
   });
 
-  // Activate button
+  // ACTIVATE USER
 
   $("#adminTable tbody").on("click", ".active-btn", function () {
     let userId = $(this).attr("data-id");
 
-    let confirmActivate = confirm(
-      "Are you sure you want to activate this user?",
-    );
-
-    if (!confirmActivate) {
+    if (!confirm("Activate this user?")) {
       return;
     }
 
@@ -94,7 +95,7 @@ $(document).ready(function () {
         if (response.status) {
           alert(response.message);
 
-          $("#adminTable").DataTable().ajax.reload(null, false);
+          adminTable.ajax.reload(null, false);
         } else {
           alert(response.message);
         }
@@ -108,16 +109,12 @@ $(document).ready(function () {
     });
   });
 
-  // Delete Button
+  // DELETE USER
 
   $("#adminTable tbody").on("click", ".delete-btn", function () {
     let userId = $(this).attr("data-id");
 
-    console.log(userId);
-
-    let confirmDelete = confirm("Are you sure you want to delete this user?");
-
-    if (!confirmDelete) {
+    if (!confirm("Delete this user?")) {
       return;
     }
 
