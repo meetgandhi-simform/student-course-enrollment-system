@@ -43,6 +43,7 @@ AuthHelper::requireRole('instructor');
 
         </table>
     </div>
+    <script src="./../js/dataTableHelper.js"></script>
     <script src="./../js/instructor/getAllStudents.js"></script>
 </body>
 <br /><br />

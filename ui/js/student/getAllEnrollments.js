@@ -1,97 +1,58 @@
 $(document).ready(function () {
-  const enrollmentTable = $("#enrollmentTable").DataTable({
-    ajax: {
-      url: "/course-management/api/student/getEnrollments.php",
-
-      type: "GET",
-
-      dataSrc: function (response) {
-        if (response.status) {
-          return response.data;
-        }
-
-        alert(response.message);
-
-        return [];
-      },
-
-      error: function (xhr) {
-        console.error(xhr.responseText);
-
-        alert("Something went wrong.");
+  // Define columns for DataTable
+  const columns = [
+    { data: "id" },
+    { data: "name" },
+    { data: "weeks" },
+    { data: "instructor_id" },
+    { data: "instructor_name" },
+    {
+      data: "status",
+      render: function (data) {
+        return `
+          <span class="status ${data.toLowerCase()}">
+              ${data}
+          </span>
+        `;
       },
     },
-
-    columns: [
-      { data: "id" },
-
-      { data: "name" },
-
-      { data: "weeks" },
-
-      { data: "instructor_id" },
-
-      { data: "instructor_name" },
-
-      {
-        data: "status",
-
-        render: function (data) {
+    {
+      data: null,
+      render: function (data, type, row) {
+        if (row.status === "Enrolled") {
           return `
-                        <span class="status ${data.toLowerCase()}">
-                            ${data}
-                        </span>
-                    `;
-        },
+            <button class="delete-btn"
+                    data-id="${row.enrollment_id}">
+                Cancel
+            </button>
+            <button class="complete-btn"
+                    data-id="${row.enrollment_id}">
+                Complete
+            </button>
+          `;
+        }
+
+        if (row.status === "Cancelled") {
+          return `
+            <button class="active-btn"
+                    data-id="${row.enrollment_id}">
+                Re-Enroll
+            </button>
+          `;
+        }
+
+        return "";
       },
+    },
+  ];
 
-      {
-        data: null,
-
-        render: function (data, type, row) {
-          if (row.status === "Enrolled") {
-            return `
-
-                            <button class="delete-btn"
-                                    data-id="${row.enrollment_id}">
-
-                                Cancel
-
-                            </button>
-
-                            <button class="complete-btn"
-                                    data-id="${row.enrollment_id}">
-
-                                Complete
-
-                            </button>
-                        `;
-          }
-
-          if (row.status === "Cancelled") {
-            return `
-                            <button class="active-btn"
-                                    data-id="${row.enrollment_id}">
-
-                                Re-Enroll
-
-                            </button>
-                        `;
-          }
-
-          return "";
-        },
-      },
-    ],
-
-    paging: true,
-    searching: true,
-    ordering: true,
-    info: true,
-    pageLength: 5,
-    responsive: true,
-    processing: true,
-  });
+  // Initialize DataTable using helper
+  const enrollmentTable = initializeDataTable(
+    "#enrollmentTable",
+    "/course-management/api/student/getEnrollments.php",
+    columns,
+    { pageLength: 5 },
+  );
 
   // CANCEL ENROLLMENT
 

@@ -1,55 +1,27 @@
 $(document).ready(function () {
-  $("#courseTable").DataTable({
-    ajax: {
-      url: "/course-management/api/instructor/getCourses.php",
-
-      type: "GET",
-
-      dataSrc: function (response) {
-        if (response.status) {
-          return response.data;
-        }
-
-        alert(response.message);
-
-        return [];
-      },
-
-      error: function (xhr) {
-        console.error(xhr.responseText);
-
-        alert("Something went wrong.");
+  // Define columns for DataTable
+  const columns = [
+    { data: "id" },
+    { data: "course_name" },
+    {
+      data: null,
+      render: function (data, type, row) {
+        return `${row.avail_seats} / ${row.max_seats}`;
       },
     },
+  ];
 
-    columns: [
-      { data: "id" },
-
-      { data: "course_name" },
-
-      {
-        data: null,
-
-        render: function (data, type, row) {
-          return `
-                        ${row.avail_seats} / ${row.max_seats}
-                    `;
-        },
+  // Initialize DataTable using helper
+  initializeDataTable(
+    "#courseTable",
+    "/course-management/api/instructor/getCourses.php",
+    columns,
+    {
+      pageLength: 5,
+      language: {
+        emptyTable: "No courses found",
+        loadingRecords: "Loading courses...",
       },
-    ],
-
-    paging: true,
-    searching: true,
-    ordering: true,
-    info: true,
-    pageLength: 5,
-    responsive: true,
-    processing: true,
-
-    language: {
-      emptyTable: "No courses found",
-
-      loadingRecords: "Loading courses...",
     },
-  });
+  );
 });

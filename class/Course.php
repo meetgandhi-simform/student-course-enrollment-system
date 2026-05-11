@@ -475,4 +475,423 @@ class Course
             ];
         }
     }
+
+
+    /**
+     * Get courses with instructor details (server-side processing for DataTables)
+     *
+     * Supports search, filtering, and sorting for DataTables server-side rendering.
+     *
+     * @param int $draw Draw counter from DataTables request
+     * @param int $start Starting index for pagination
+     * @param int $length Number of records to return
+     * @param string $search Search term to filter courses and instructors
+     * @param string $orderColumn Column name to order by
+     * @param string $orderDirection Sort direction (ASC or DESC)
+     *
+     * @return array{draw: int, recordsTotal: int, recordsFiltered: int, data: array, error?: string}
+     */
+    public function getCoursesWithInstructorServerSide($draw, $start, $length, $search, $orderColumn, $orderDirection)
+    {
+        try {
+            $baseQuery = "
+            FROM courses c
+            INNER JOIN course_instructor ci
+            ON c.id = ci.course_id
+            INNER JOIN users u
+            ON u.id = ci.instructor_id
+            WHERE 1=1
+        ";
+
+            // SEARCH
+
+            if (!empty($search)) {
+                $baseQuery .= "
+                AND (
+                    c.course_name LIKE ? OR
+                    u.name LIKE ? OR
+                    u.isActive LIKE ?
+                )
+            ";
+            }
+
+            // TOTAL RECORDS
+
+            $totalQuery = "
+            SELECT COUNT(*) as total
+            FROM courses c
+            INNER JOIN course_instructor ci
+            ON c.id = ci.course_id
+            INNER JOIN users u
+            ON u.id = ci.instructor_id
+        ";
+
+            $totalResult = $this->conn->query($totalQuery);
+            $totalRecords = $totalResult->fetch_assoc()['total'];
+
+            // FILTERED RECORDS
+
+            $filteredQuery = "
+            SELECT COUNT(*) as total
+            {$baseQuery}
+        ";
+
+            $stmt = $this->conn->prepare($filteredQuery);
+            if (!empty($search)) {
+                $searchTerm = "%{$search}%";
+                $stmt->bind_param(
+                    "sss",
+                    $searchTerm,
+                    $searchTerm,
+                    $searchTerm
+                );
+            }
+
+            $stmt->execute();
+            $filteredResult = $stmt->get_result();
+            $filteredRecords = $filteredResult->fetch_assoc()['total'];
+
+            // MAIN DATA QUERY
+
+            $dataQuery = "
+
+            SELECT
+                c.id,
+                c.course_name,
+                c.max_seats,
+                c.avail_seats,
+                ci.instructor_id,
+                u.name,
+                u.isActive
+            {$baseQuery}
+            ORDER BY {$orderColumn} {$orderDirection}
+            LIMIT ? OFFSET ?
+        ";
+            $stmt = $this->conn->prepare($dataQuery);
+            if (!empty($search)) {
+                $searchTerm = "%{$search}%";
+                $stmt->bind_param(
+                    "sssii",
+                    $searchTerm,
+                    $searchTerm,
+                    $searchTerm,
+                    $length,
+                    $start
+                );
+            } else {
+                $stmt->bind_param(
+                    "ii",
+                    $length,
+                    $start
+                );
+            }
+
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $data = [];
+            while ($row = $result->fetch_assoc()) {
+                $data[] = $row;
+            }
+            return [
+                "draw" => intval($draw),
+                "recordsTotal" => intval($totalRecords),
+                "recordsFiltered" => intval($filteredRecords),
+                "data" => $data
+            ];
+        } catch (Exception $e) {
+            return [
+                "draw" => intval($draw),
+                "recordsTotal" => 0,
+                "recordsFiltered" => 0,
+                "data" => [],
+                "error" => $e->getMessage()
+            ];
+        }
+    }
+
+    /**
+     * Get courses for a specific instructor (server-side processing for DataTables)
+     *
+     * Supports search, filtering, and sorting for DataTables server-side rendering.
+     * Retrieves only courses assigned to the specified instructor.
+     *
+     * @param int $draw Draw counter from DataTables request
+     * @param int $instructor_id Instructor ID to filter courses by
+     * @param int $start Starting index for pagination
+     * @param int $length Number of records to return
+     * @param string $search Search term to filter course names
+     * @param string $orderColumn Column name to order by
+     * @param string $orderDirection Sort direction (ASC or DESC)
+     *
+     * @return array{draw: int, recordsTotal: int, recordsFiltered: int, data: array, error?: string}
+     */
+    public function getCourseByInstructorServerSide($draw, $instructor_id, $start, $length, $search, $orderColumn, $orderDirection)
+    {
+        try {
+            $baseQuery = "
+            FROM courses c
+            JOIN course_instructor ci
+                ON c.id = ci.course_id
+            WHERE ci.instructor_id = ?
+        ";
+
+            // SEARCH
+            if (!empty($search)) {
+                $baseQuery .= "
+                AND (
+                    c.course_name LIKE ?
+                )
+            ";
+            }
+
+            // TOTAL RECORDS
+            $totalQuery = "
+            SELECT COUNT(*) as total
+            FROM courses c
+            JOIN course_instructor ci
+                ON c.id = ci.course_id
+            WHERE ci.instructor_id = ?
+        ";
+            $stmt = $this->conn->prepare($totalQuery);
+            $stmt->bind_param("i", $instructor_id);
+            $stmt->execute();
+            $totalResult = $stmt->get_result();
+            $totalRecords = $totalResult->fetch_assoc()['total'];
+
+            // FILTERED RECORDS
+            $filteredQuery = "
+            SELECT COUNT(*) as total
+            {$baseQuery}
+        ";
+
+            $stmt = $this->conn->prepare($filteredQuery);
+            if (!empty($search)) {
+                $searchTerm = "%{$search}%";
+                $stmt->bind_param(
+                    "is",
+                    $instructor_id,
+                    $searchTerm
+                );
+            } else {
+                $stmt->bind_param(
+                    "i",
+                    $instructor_id
+                );
+            }
+
+            $stmt->execute();
+            $filteredResult = $stmt->get_result();
+            $filteredRecords = $filteredResult->fetch_assoc()['total'];
+
+            // MAIN DATA QUERY
+            $dataQuery = "
+            SELECT
+                c.id,
+                c.course_name,
+                c.max_seats,
+                c.avail_seats
+            {$baseQuery}
+            ORDER BY {$orderColumn} {$orderDirection}
+            LIMIT ? OFFSET ?
+        ";
+
+            $stmt = $this->conn->prepare($dataQuery);
+            if (!empty($search)) {
+                $searchTerm = "%{$search}%";
+                $stmt->bind_param(
+                    "isii",
+                    $instructor_id,
+                    $searchTerm,
+                    $length,
+                    $start
+                );
+            } else {
+                $stmt->bind_param(
+                    "iii",
+                    $instructor_id,
+                    $length,
+                    $start
+                );
+            }
+
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $data = [];
+
+            while ($row = $result->fetch_assoc()) {
+                $data[] = $row;
+            }
+
+            return [
+                "draw" => intval($draw),
+                "recordsTotal" => intval($totalRecords),
+                "recordsFiltered" => intval($filteredRecords),
+                "data" => $data
+            ];
+        } catch (Exception $e) {
+            return [
+                "draw" => intval($draw),
+                "recordsTotal" => 0,
+                "recordsFiltered" => 0,
+                "data" => [],
+                "error" => $e->getMessage()
+            ];
+        }
+    }
+
+    /**
+     * Get all available courses for a student (server-side processing for DataTables)
+     *
+     * Supports search, filtering, and sorting for DataTables server-side rendering.
+     * Returns only courses the student is not already enrolled in.
+     *
+     * @param int $draw Draw counter from DataTables request
+     * @param int $student_id Student ID to filter available courses
+     * @param int $start Starting index for pagination
+     * @param int $length Number of records to return
+     * @param string $search Search term to filter courses, instructors, or duration
+     * @param string $orderColumn Column name to order by
+     * @param string $orderDirection Sort direction (ASC or DESC)
+     *
+     * @return array{draw: int, recordsTotal: int, recordsFiltered: int, data: array, error?: string}
+     */
+    public function getAllCoursesServerSide(
+        $draw,
+        $student_id,
+        $start,
+        $length,
+        $search,
+        $orderColumn,
+        $orderDirection
+    ) {
+
+        try {
+            $baseQuery = "
+            FROM course_instructor ci
+            JOIN courses c
+                ON c.id = ci.course_id
+            JOIN users u
+                ON u.id = ci.instructor_id
+            WHERE NOT EXISTS (
+                SELECT 1
+                FROM enrollments e
+                WHERE e.course_instructor_id = ci.id
+                AND e.student_id = ?
+            )
+        ";
+
+            // SEARCH
+            if (!empty($search)) {
+                $baseQuery .= "
+                AND (
+                    c.course_name LIKE ?
+                    OR u.name LIKE ?
+                    OR c.duration_weeks LIKE ?
+                )
+            ";
+            }
+
+            // TOTAL RECORDS
+            $totalQuery = "
+            SELECT COUNT(*) as total
+            FROM course_instructor ci
+            WHERE NOT EXISTS (
+                SELECT 1
+                FROM enrollments e
+                WHERE e.course_instructor_id = ci.id
+                AND e.student_id = ?
+            )
+        ";
+            $stmt = $this->conn->prepare($totalQuery);
+            $stmt->bind_param("i", $student_id);
+            $stmt->execute();
+            $totalResult = $stmt->get_result();
+            $totalRecords = $totalResult->fetch_assoc()['total'];
+
+            // FILTERED RECORDS
+
+            $filteredQuery = "
+            SELECT COUNT(*) as total
+            {$baseQuery}
+        ";
+
+            $stmt = $this->conn->prepare($filteredQuery);
+            if (!empty($search)) {
+                $searchTerm = "%{$search}%";
+                $stmt->bind_param(
+                    "isss",
+                    $student_id,
+                    $searchTerm,
+                    $searchTerm,
+                    $searchTerm
+                );
+            } else {
+                $stmt->bind_param(
+                    "i",
+                    $student_id
+                );
+            }
+            $stmt->execute();
+            $filteredResult = $stmt->get_result();
+            $filteredRecords = $filteredResult->fetch_assoc()['total'];
+
+            // MAIN DATA QUERY
+
+            $dataQuery = "
+            SELECT
+                c.id,
+                c.course_name,
+                c.duration_weeks,
+                c.avail_seats,
+                ci.id AS course_instructor_id,
+                u.name AS instructor_name
+            {$baseQuery}
+            ORDER BY {$orderColumn} {$orderDirection}
+            LIMIT ? OFFSET ?
+        ";
+
+            $stmt = $this->conn->prepare($dataQuery);
+            if (!empty($search)) {
+                $searchTerm = "%{$search}%";
+                $stmt->bind_param(
+                    "isssii",
+                    $student_id,
+                    $searchTerm,
+                    $searchTerm,
+                    $searchTerm,
+                    $length,
+                    $start
+                );
+            } else {
+                $stmt->bind_param(
+                    "iii",
+                    $student_id,
+                    $length,
+                    $start
+                );
+            }
+
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $data = [];
+
+            while ($row = $result->fetch_assoc()) {
+                $data[] = $row;
+            }
+            return [
+                "draw" => intval($draw),
+                "recordsTotal" => intval($totalRecords),
+                "recordsFiltered" => intval($filteredRecords),
+                "data" => $data
+            ];
+        } catch (Exception $e) {
+            return [
+                "draw" => intval($draw),
+                "recordsTotal" => 0,
+                "recordsFiltered" => 0,
+                "data" => [],
+                "error" => $e->getMessage()
+            ];
+        }
+    }
 }

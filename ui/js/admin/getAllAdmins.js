@@ -1,150 +1,108 @@
 $(document).ready(function () {
-  const adminTable = $("#adminTable").DataTable({
-    ajax: {
-      url: "/course-management/api/admins/getAdmins.php",
-      type: "GET",
-
-      dataSrc: function (response) {
-        if (response.status) {
-          return response.data;
-        }
-        console.error(response.message);
-        alert(response.message);
-        return [];
-      },
-
-      error: function (xhr) {
-        console.error(xhr.responseText);
-        alert("Something went wrong while fetching admins.");
+  // Define columns for DataTable
+  const columns = [
+    { data: "id" },
+    { data: "name" },
+    { data: "email" },
+    { data: "phone" },
+    { data: "role" },
+    {
+      data: "isActive",
+      render: function (data) {
+        return `
+          <span class="status ${data.toLowerCase()}">
+            ${data}
+          </span>
+        `;
       },
     },
-    columns: [
-      { data: "id" },
-      { data: "name" },
-      { data: "email" },
-      { data: "phone" },
-      { data: "role" },
-      {
-        data: "isActive",
-        render: function (data) {
+    {
+      data: null,
+      orderable: false,
+      searchable: false,
+      render: function (data, type, row) {
+        if (row.isActive === "Active") {
           return `
-                  <span class="status ${data.toLowerCase()}">
-                      ${data}
-                  </span>
-                `;
-        },
+            <button class="delete-btn"
+                    data-id="${row.id}">
+              Delete
+            </button>
+          `;
+        }
+
+        return `
+          <button class="active-btn"
+                  data-id="${row.id}">
+            Activate User
+          </button>
+        `;
       },
+    },
+  ];
 
-      {
-        data: null,
+  // Initialize DataTable using helper
+  const adminTable = initializeDataTable(
+    "#adminTable",
+    "/course-management/api/admins/getAdmins.php",
+    columns,
+    { pageLength: 5 },
+  );
 
-        render: function (row) {
-          if (row.isActive === "Active") {
-            return `
-                    <button class="delete-btn"
-                            data-id="${row.id}">
-                        Delete
-                    </button>
-                `;
-          }
-
-          return `
-                  <button class="active-btn" data-id="${row.id}">
-                      Activate User
-                  </button>
-                `;
-        },
-      },
-    ],
-
-    paging: true,
-    searching: true,
-    ordering: true,
-    info: true,
-    pageLength: 5,
-    responsive: true,
-    processing: true,
-  });
-
-  // Activate button
-
+  // ACTIVATE USER
   $("#adminTable tbody").on("click", ".active-btn", function () {
     let userId = $(this).attr("data-id");
 
-    let confirmActivate = confirm(
-      "Are you sure you want to activate this user?",
-    );
-
-    if (!confirmActivate) {
+    if (!confirm("Activate this user?")) {
       return;
     }
 
     $.ajax({
       url: "/course-management/handlers/adminInstructorHandlers/activeUserHandler.php",
-
       type: "POST",
-
       dataType: "json",
-
       data: {
         id: userId,
       },
-
       success: function (response) {
         if (response.status) {
           alert(response.message);
-
-          $("#adminTable").DataTable().ajax.reload(null, false);
-        } else {
-          alert(response.message);
-        }
-      },
-
-      error: function (xhr) {
-        console.error(xhr.responseText);
-
-        alert("Something went wrong.");
-      },
-    });
-  });
-
-  // Delete Button
-
-  $("#adminTable tbody").on("click", ".delete-btn", function () {
-    let userId = $(this).attr("data-id");
-
-    console.log(userId);
-
-    let confirmDelete = confirm("Are you sure you want to delete this user?");
-
-    if (!confirmDelete) {
-      return;
-    }
-
-    $.ajax({
-      url: "/course-management/auth/Delete.php",
-
-      type: "POST",
-
-      dataType: "json",
-
-      data: {
-        id: userId,
-      },
-
-      success: function (response) {
-        if (response.status) {
-          alert(response.message);
-
           adminTable.ajax.reload(null, false);
         } else {
           alert(response.message);
         }
       },
-
       error: function (xhr) {
         console.error(xhr.responseText);
+        alert("Something went wrong.");
+      },
+    });
+  });
 
+  // DELETE USER
+  $("#adminTable tbody").on("click", ".delete-btn", function () {
+    let userId = $(this).attr("data-id");
+
+    if (!confirm("Delete this user?")) {
+      return;
+    }
+
+    $.ajax({
+      url: "/course-management/auth/Delete.php",
+      type: "POST",
+      dataType: "json",
+      data: {
+        id: userId,
+      },
+      success: function (response) {
+        if (response.status) {
+          alert(response.message);
+          adminTable.ajax.reload(null, false);
+        } else {
+          alert(response.message);
+        }
+      },
+      error: function (xhr) {
+        console.error(xhr.responseText);
         alert("Something went wrong.");
       },
     });
