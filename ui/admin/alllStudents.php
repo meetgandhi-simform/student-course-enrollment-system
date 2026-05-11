@@ -40,6 +40,7 @@ AuthHelper::requireRole('admin');
             <tbody></tbody>
         </table>
     </div>
+    <script src="./../js/dataTableHelper.js"></script>
     <script src="./../js/admin/getAllStudents.js"></script>
 </body>
 <br /><br />

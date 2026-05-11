@@ -45,6 +45,7 @@ AuthHelper::requireRole('student');
 
         </table>
     </div>
+    <script src="./../js/dataTableHelper.js"></script>
     <script src="./../js/student/getAllCourses.js"></script>
 </body>
 <br /><br />

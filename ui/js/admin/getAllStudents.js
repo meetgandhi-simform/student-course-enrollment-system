@@ -1,75 +1,52 @@
 $(document).ready(function () {
-  const studentTable = $("#studentTable").DataTable({
-    processing: true,
-
-    serverSide: true,
-
-    ajax: {
-      url: "/course-management/api/admins/getStudents.php",
-
-      type: "POST",
-
-      error: function (xhr) {
-        console.error(xhr.responseText);
-
-        alert("Something went wrong.");
+  // Define columns for DataTable
+  const columns = [
+    { data: "id" },
+    { data: "name" },
+    { data: "email" },
+    { data: "phone" },
+    { data: "role" },
+    {
+      data: "isActive",
+      render: function (data) {
+        return `
+          <span class="status ${data.toLowerCase()}">
+            ${data}
+          </span>
+        `;
       },
     },
-
-    columns: [
-      { data: "id" },
-
-      { data: "name" },
-
-      { data: "email" },
-
-      { data: "phone" },
-
-      { data: "role" },
-
-      {
-        data: "isActive",
-
-        render: function (data) {
+    {
+      data: null,
+      orderable: false,
+      searchable: false,
+      render: function (data, type, row) {
+        if (row.isActive === "Active") {
           return `
-            <span class="status ${data.toLowerCase()}">
-              ${data}
-            </span>
-          `;
-        },
-      },
-
-      {
-        data: null,
-
-        orderable: false,
-
-        searchable: false,
-
-        render: function (data, type, row) {
-          if (row.isActive === "Active") {
-            return `
-              <button class="delete-btn"
-                      data-id="${row.id}">
-                Delete
-              </button>
-            `;
-          }
-
-          return `
-            <button class="active-btn"
+            <button class="delete-btn"
                     data-id="${row.id}">
-              Activate User
+              Delete
             </button>
           `;
-        },
+        }
+
+        return `
+          <button class="active-btn"
+                  data-id="${row.id}">
+            Activate User
+          </button>
+        `;
       },
-    ],
+    },
+  ];
 
-    pageLength: 5,
-
-    responsive: true,
-  });
+  // Initialize DataTable using helper
+  const studentTable = initializeDataTable(
+    "#studentTable",
+    "/course-management/api/admins/getStudents.php",
+    columns,
+    { pageLength: 5 },
+  );
 
   $("#studentTable tbody").on("click", ".delete-btn", function () {
     let userId = $(this).attr("data-id");

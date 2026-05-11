@@ -1,76 +1,64 @@
 $(document).ready(function () {
-  const enrollmentTable = $("#enrollmentTable").DataTable({
-    processing: true,
-
-    serverSide: true,
-
-    ajax: {
-      url: "/course-management/api/admins/getEnrollments.php",
-      type: "POST",
-      error: function (xhr) {
-        console.error(xhr.responseText);
-        alert("Something went wrong.");
+  // Define columns for DataTable
+  const columns = [
+    { data: "enrollment_id" },
+    { data: "course_name" },
+    { data: "student_id" },
+    { data: "student_name" },
+    { data: "instructor_id" },
+    { data: "instructor_name" },
+    {
+      data: "enrollment_status",
+      render: function (data) {
+        return `
+          <span class="status ${data.toLowerCase()}">
+            ${data}
+          </span>
+        `;
       },
     },
-
-    columns: [
-      { data: "enrollment_id" },
-      { data: "course_name" },
-      { data: "student_id" },
-      { data: "student_name" },
-      { data: "instructor_id" },
-      { data: "instructor_name" },
-      {
-        data: "enrollment_status",
-        render: function (data) {
+    {
+      data: null,
+      orderable: false,
+      searchable: false,
+      render: function (data, type, row) {
+        if (row.enrollment_status === "Enrolled") {
           return `
-            <span class="status ${data.toLowerCase()}">
-              ${data}
-            </span>
+            <button class="delete-btn"
+                    data-id="${row.enrollment_id}">
+              Cancel Enrollment
+            </button>
+            <button class="active-btn"
+                    data-id="${row.enrollment_id}">
+              Complete
+            </button>
           `;
-        },
+        }
+
+        if (
+          row.enrollment_status === "Cancelled" ||
+          row.enrollment_status === "Completed"
+        ) {
+          return `
+            <button class="reenroll-btn"
+                    data-id="${row.enrollment_id}">
+              Re-Enroll
+            </button>
+          `;
+        }
+
+        return "";
       },
+    },
+  ];
 
-      {
-        data: null,
-        orderable: false,
-        searchable: false,
-        render: function (data, type, row) {
-          if (row.enrollment_status === "Enrolled") {
-            return `
-              <button class="delete-btn"
-                      data-id="${row.enrollment_id}">
-                Cancel Enrollment
-              </button>
-
-              <button class="active-btn"
-                      data-id="${row.enrollment_id}">
-                Complete
-              </button>
-            `;
-          }
-
-          if (
-            row.enrollment_status === "Cancelled" ||
-            row.enrollment_status === "Completed"
-          ) {
-            return `
-              <button class="reenroll-btn"
-                      data-id="${row.enrollment_id}">
-                Re-Enroll
-              </button>
-            `;
-          }
-
-          return "";
-        },
-      },
-    ],
-
-    pageLength: 5,
-
-    responsive: true,
-  });
+  // Initialize DataTable using helper
+  const enrollmentTable = initializeDataTable(
+    "#enrollmentTable",
+    "/course-management/api/admins/getEnrollments.php",
+    columns,
+    { pageLength: 5 },
+  );
 
   // CANCEL ENROLLMENT
 

@@ -1,59 +1,52 @@
 $(document).ready(function () {
-  const instructorTable = $("#instructorTable").DataTable({
-    processing: true,
-    serverSide: true,
-    ajax: {
-      url: "/course-management/api/admins/getInstructors.php",
-      type: "POST",
-      error: function (xhr) {
-        console.error(xhr.responseText);
-        alert("Something went wrong.");
+  // Define columns for DataTable
+  const columns = [
+    { data: "id" },
+    { data: "name" },
+    { data: "email" },
+    { data: "phone" },
+    { data: "role" },
+    {
+      data: "isActive",
+      render: function (data) {
+        return `
+          <span class="status ${data.toLowerCase()}">
+            ${data}
+          </span>
+        `;
       },
     },
-    columns: [
-      { data: "id" },
-      { data: "name" },
-      { data: "email" },
-      { data: "phone" },
-      { data: "role" },
-      {
-        data: "isActive",
-        render: function (data) {
+    {
+      data: null,
+      orderable: false,
+      searchable: false,
+      render: function (data, type, row) {
+        if (row.isActive === "Active") {
           return `
-            <span class="status ${data.toLowerCase()}">
-              ${data}
-            </span>
-          `;
-        },
-      },
-
-      {
-        data: null,
-        orderable: false,
-        searchable: false,
-        render: function (data, type, row) {
-          if (row.isActive === "Active") {
-            return `
-              <button class="delete-btn"
-                      data-id="${row.id}">
-                Delete
-              </button>
-            `;
-          }
-
-          return `
-            <button class="active-btn"
+            <button class="delete-btn"
                     data-id="${row.id}">
-              Activate User
+              Delete
             </button>
           `;
-        },
-      },
-    ],
+        }
 
-    pageLength: 5,
-    responsive: true,
-  });
+        return `
+          <button class="active-btn"
+                  data-id="${row.id}">
+            Activate User
+          </button>
+        `;
+      },
+    },
+  ];
+
+  // Initialize DataTable using helper
+  const instructorTable = initializeDataTable(
+    "#instructorTable",
+    "/course-management/api/admins/getInstructors.php",
+    columns,
+    { pageLength: 5 },
+  );
 
   // DELETE
 
